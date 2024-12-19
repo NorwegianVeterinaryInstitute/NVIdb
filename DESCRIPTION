@@ -39,7 +39,7 @@ Imports:
     snakecase,
     stats,
     utils,
-    NVIcheckmate (>= 0.7.0)
+    NVIcheckmate (>= 0.8.0)
 Suggests:
     covr,
     desc,
