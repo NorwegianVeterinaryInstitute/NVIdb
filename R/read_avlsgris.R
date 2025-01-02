@@ -75,7 +75,7 @@ read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder"
   
   # READ IN ALL FILES IN THE DIRECTORY AND MAKE A LIST OF THE SELECTED VERSIONS OF EXTRACTS FROM PKODEREGISTERET
   filelist <- select_files_for_date(from_path = from_path,
-                                    filename_text = c("avlsgris", "11"),
+                                    filename_text = c("avlsgris"),
                                     file_extension = "csv",
                                     year = as.character(year),
                                     month = month,
@@ -143,10 +143,20 @@ read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder"
 ### select_prodtilskudd_files ----
 
 
-#' @title List selected files from Søknad om register for produksjonstilskudd
-#' @description List selected files with extracts from Søknad om register
-#'     for produksjonstilskudd.
-#' @details Reads the filenames of files with extracts from Søknad om register
+#' @title Selects files based on date in file name
+#' @description List file names that are selected based on the date information 
+#'     in the file name. 
+#' @details Reads the file names of files with the register date version in the 
+#'     file name. The routine assumes that the first number in the file name
+#'     that can be a year, is the year (\%Y), year_month (\%Y\%m) or 
+#'     year_month_day (\%Y\%m\%d) for the register date. The register date 
+#'     is extracted from the file name and the correct source file(s) are 
+#'     thereafter selected. 
+#'     
+#'     If the either the last version of the 
+#'     register or the last version at or before the given year and month 
+#'     is selected.
+#'     extracts from Søknad om register
 #'     for produksjonstilskudd into a data frame. The function gives options to
 #'     select year and month and path for the files. The function is called from
 #'     \code{read_Prodtilskudd} and \code{copy_Prodtilskudd}.
@@ -172,16 +182,17 @@ select_files_for_date <- function(from_path,
                                   filename_text,
                                   file_extension,
                                   year,
-                                  month,
+                                  month = "12",
                                   day = NULL,
+                                  match_date = "last_before",
                                   extracted_date = NULL) {
   
   # READ ALL FILES IN DIRECTORY WITH A FILENAME IN ACCORD WITH filename_text AND file_extension
   # Read filelist
   filelist <- list.files(path = from_path, 
-                                       pattern = filename_text[1], 
-                                       ignore.case = TRUE, 
-                                       include.dirs = FALSE)
+                         pattern = filename_text[1], 
+                         ignore.case = TRUE, 
+                         include.dirs = FALSE)
   # Select if more criteria than one in filename
   if (length(filename_text) > 1){
     for (text in filename_text[2:length(filename_text)]) {
@@ -194,60 +205,25 @@ select_files_for_date <- function(from_path,
   filelist <- subset(filelist, filelist$extension %in% file_extension)
   
   # IDENTIFY YEAR, MONTH AND DATE IN FILENAME
-  filelist$position <- gregexpr(pattern = "[_[:space:]]20", filelist[, "filename"])
-  
-  
-  #  FUNKER IKKE strcapture("\\d{4}", x = year,  proto = filelist)
-  
-  # MAKE A LIST OF THE LAST VERSION OF ALL UTREKK FRO PKODEREGISTERET
-  filelist$fileinfo <- sub("per ", "", filelist$filename)
-  filelist$fileinfo <- sub("fra ", "", filelist$fileinfo)
-  filelist$fileinfo <- sub(".csv", "", filelist$fileinfo)
-  filelist$pkodeaar <- substr(filelist$fileinfo, 6, 9)
-  filelist$pkodemonth <- substr(filelist$fileinfo, 10, 11)
-  filelist$content <- sapply(filelist$fileinfo, FUN = find_n_th_word, position = 2)
-  filelist <- subset(filelist,
-                     tolower(substr(filelist$fileinfo, 1, 5)) == "pkode" &
-                       filelist$pkodeaar > "1994" & filelist$pkodeaar < "2099" &
-                       filelist$content %in% c("Koordinater", "Uttrekk"))
-  filelist$contenttype <- sapply(filelist$fileinfo, FUN = find_n_th_word, position = 4)
-  filelist <- subset(filelist, filelist$contenttype == "UTF8")
-  
-  filelist$uttrekk_dato <- as.Date(sapply(filelist$fileinfo, FUN = find_n_th_word, position = 3), format = "%Y%m%d")
-  max_uttrekk_dato <- stats::aggregate(filelist$uttrekk_dato, by = list(filelist$pkodeaar, filelist$pkodemonth), FUN = max)
-  filelist <- merge(filelist, max_uttrekk_dato, by.x = c("pkodeaar", "pkodemonth"), by.y = c("Group.1", "Group.2"))
-  filelist <- filelist[, c("filename", "pkodeaar", "pkodemonth", "uttrekk_dato", "x")]
-  filelist <- filelist[order(filelist$pkodeaar, filelist$pkodemonth, filelist$uttrekk_dato, decreasing = TRUE), ]
+  filelist$position <- regexpr(pattern = "[_[:space:]]20", filelist[, "filename"])
+  filelist$date <- as.Date(substr(filelist$filename, filelist$position + 1, filelist$position + 9), "%Y%m%d")
+  filelist$year <- format(filelist$date, "%Y")
+  filelist$month <- format(filelist$date, "%m")
+
+# SORT DATA FROM LATEST TO FIRST
+  filelist <- filelist[order(filelist$year, filelist$month, filelist$date, decreasing = TRUE), ]
   
   if (is.null(extracted_date)) {
-    filelist <- subset(filelist, filelist$uttrekk_dato == filelist$x)
-    if ("last" %in% Pkode_year) {
-      filelist <- filelist[c(1:2), ]
-      if (!"both" %in% Pkode_month) {
-        if ("last" %in% Pkode_month) {
-          filelist <- filelist[1, ]
-        } else {
-          filelist <- subset(filelist, filelist$pkodemonth %in% Pkode_month)
-        }
+    # filelist <- subset(filelist, filelist$uttrekk_dato == filelist$x)
+    if ("last" %in% year) {
+      filelist <- head(filelist, 1)
       }
+    if (!"last" %in% year) {
+      filelist[which(filelist$year <= year), match_year] <- "LE"
+      filelist[which(filelist$month <= month), match_month] <- "LE"
+      filelist <- subset(filelist, filelist$match_year == "LE" & filelist$match_month == "LE")
+      filelist <- head(filelist, 1)
     }
-    if (!"last" %in% Pkode_year) {
-      filelist <- subset(filelist, filelist$pkodeaar %in% Pkode_year)
-      if (!"both" %in% Pkode_month) {
-        if ("last" %in% Pkode_month) {
-          filelist <- filelist[1, ]
-        } else {
-          filelist <- subset(filelist, filelist$pkodemonth %in% Pkode_month)
-        }
-      }
-    }
-  }
-  # Selection for uttrekk_dato
-  if (!is.null(extracted_date)) {
-    filelist <- subset(filelist, filelist$pkodeaar %in% Pkode_year)
-    filelist <- subset(filelist, filelist$pkodemonth %in% Pkode_month)
-    checkmate::assert_choice(as.Date(extracted_date), choices = filelist$uttrekk_dato)
-    filelist <- subset(filelist, filelist$uttrekk_dato %in% as.Date(extracted_date))
   }
   
   return(filelist)
