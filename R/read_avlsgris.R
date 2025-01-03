@@ -20,7 +20,7 @@
 #'     The year from which the register should be read. Options is "last", or
 #'     a year. Defaults to "last".
 #' @param month [\code{character(1)}]\cr
-#'     The month for which the register should be read. Defaults to \code{NULL}.
+#'     The month for which the register should be read. Defaults to "12".
 #' @param \dots	Other arguments to be passed to
 #'     \ifelse{html}{\code{\link[data.table:fread]{data.table::fread}}}{\code{data.table::fread}}.
 #'
@@ -41,7 +41,7 @@
 read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder", slash = FALSE),
                                                 "Avlsgris", "FormaterteData"),
                           year = "last",
-                          month = NULL,
+                          month = "12",
                           ...) {
 
   # PREPARE ARGUMENT ----
