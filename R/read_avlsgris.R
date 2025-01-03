@@ -1,14 +1,14 @@
 #' @title Read Register with avlsgrisbesetninger
 #' @description Functions to read versions of the
 #'     avlsgris-register.
-#' @details The avlsgris-register includes information on the avlsgris herds. 
-#'     The register is updated from the industry at least once a year. This 
+#' @details The avlsgris-register includes information on the avlsgris herds.
+#'     The register is updated from the industry at least once a year. This
 #'     function automatically selects the last updated
 #'     version of the register.
 #'
 #'     \code{read_avlsris} reads the avlsgris-register into a
-#'     data frame. The function gives options to select year and month. If there 
-#'     are no available version from the selected month, the last available 
+#'     data frame. The function gives options to select year and month. If there
+#'     are no available version from the selected month, the last available
 #'     version before the chosen month, will be selected. The
 #'     standard settings will read in the files from NVI's internal network and
 #'     select the latest updated file.
@@ -38,16 +38,16 @@
 #' avlsgris2021 <- read_avlsgris(year = 2021, Pkode_month = "03")
 #' }
 #'
-read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder", slash = FALSE), 
+read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder", slash = FALSE),
                                                 "Avlsgris", "FormaterteData"),
                           year = "last",
                           month = NULL,
                           ...) {
-  
+
   # PREPARE ARGUMENT ----
   # Removing ending "/" and "\\" from pathnames
   from_path <- sub("/+$|\\\\+$", "", from_path)
-  
+
   # ARGUMENT CHECKING ----
   # Object to store check-results
   checks <- checkmate::makeAssertCollection()
@@ -70,24 +70,24 @@ read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder"
                     add = checks)
   # Report check-results
   checkmate::reportAssertions(checks)
-  
-  
-  
+
+
+
   # READ IN ALL FILES IN THE DIRECTORY AND MAKE A DATA FRAME OF THE SELECTED FILE NAMES
-  # Read data for the selected year and months 
-  filelist <- select_files_for_date(from_path = from_path,
+  # Read data for the selected year and months
+  filelist <- select_file_for_date(from_path = from_path,
                                     filename_text = c("avlsgris"),
                                     file_extension = "csv",
                                     year = as.character(year),
                                     month = month,
                                     extracted_date = NULL)
-  
+
   # Check if any version of the register was found and give an ERROR if not
   NVIcheckmate::assert_data_frame(filelist, min.rows = 1,
                                   comment = paste("No versions of Produksjonstilskudd available for year",
-                                                  Pkode_year,
+                                                  year,
                                                   "and month",
-                                                  Pkode_month,
+                                                  month,
                                                   "."))
 # READ DATA FROM THE SELECTED FILE
   # Read the colclasses
@@ -113,15 +113,15 @@ read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder"
 
 
 #' @title Selects files based on date in file name
-#' @description List file names that are selected based on the date information 
-#'     in the file name. 
-#' @details Reads the file names of files with the register date version in the 
+#' @description List file names that are selected based on the date information
+#'     in the file name.
+#' @details Reads the file names of files with the register date version in the
 #'     file name. The routine assumes that the first number in the file name
-#'     that can be a year, is the year (\%Y), year_month (\%Y\%m) or 
-#'     year_month_day (\%Y\%m\%d) for the register date. The register date 
-#'     is extracted from the file name and the file name of correct source 
-#'     file(s) are thereafter selected. 
-#'     
+#'     that can be a year, is the year (\%Y), year_month (\%Y\%m) or
+#'     year_month_day (\%Y\%m\%d) for the register date. The register date
+#'     is extracted from the file name and the file name of correct source
+#'     file(s) are thereafter selected.
+#'
 #'     The function is called from \code{read_avlsgris}.
 #'
 #' @param from_path [\code{character(1)}]\cr
@@ -129,13 +129,13 @@ read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder"
 #' @param filename_text [\code{character}]\cr
 #' @param file_extension [\code{character}]\cr
 #' @param year [\code{character}] | [\code{numeric}]\cr
-#' The year(s) from which the register should be read. Options is "last", or a 
+#' The year(s) from which the register should be read. Options is "last", or a
 #'     vector with one or more years.
 #' @param month [\code{character}]\cr
 #'     The month for which the register should be read, see details. Defaults to
 #'     \code{NULL}.
 #' @param day [\code{character}]\cr
-#' @param match_date [\code{character(1)}]\cr 
+#' @param match_date [\code{character(1)}]\cr
 #' @param extracted_date [\code{character(1)}]\cr
 #'
 #' @return A data frame with file names of the files that should be selected.
@@ -150,7 +150,7 @@ read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder"
 #' }
 #' @keywords internal
 
-select_files_for_date <- function(from_path,
+select_file_for_date <- function(from_path,
                                   filename_text,
                                   file_extension,
                                   year,
@@ -158,15 +158,15 @@ select_files_for_date <- function(from_path,
                                   day = NULL,
                                   match_date = "last_before",
                                   extracted_date = NULL) {
-  
+
   # READ ALL FILES IN DIRECTORY WITH A FILENAME IN ACCORD WITH filename_text AND file_extension
   # Read filelist
-  filelist <- list.files(path = from_path, 
-                         pattern = filename_text[1], 
-                         ignore.case = TRUE, 
+  filelist <- list.files(path = from_path,
+                         pattern = filename_text[1],
+                         ignore.case = TRUE,
                          include.dirs = FALSE)
   # Select if more criteria than one in filename
-  if (length(filename_text) > 1){
+  if (length(filename_text) > 1) {
     for (text in filename_text[2:length(filename_text)]) {
       filelist <- filelist[grepl(pattern = text, x = filelist, ignore.case = TRUE)]
     }
@@ -175,7 +175,7 @@ select_files_for_date <- function(from_path,
   # Select extension
   filelist$extension <- tools::file_ext(filelist$filename)
   filelist <- subset(filelist, filelist$extension %in% file_extension)
-  
+
   # IDENTIFY YEAR, MONTH AND DATE IN FILENAME
   filelist$position <- regexpr(pattern = "[_[:space:]]20", filelist[, "filename"])
   filelist$date <- as.Date(substr(filelist$filename, filelist$position + 1, filelist$position + 9), "%Y%m%d")
@@ -184,19 +184,19 @@ select_files_for_date <- function(from_path,
 
 # SORT DATA FROM LATEST TO FIRST
   filelist <- filelist[order(filelist$year, filelist$month, filelist$date, decreasing = TRUE), ]
-  
+
   if (is.null(extracted_date)) {
     # filelist <- subset(filelist, filelist$uttrekk_dato == filelist$x)
     if ("last" %in% year) {
-      filelist <- head(filelist, 1)
+      filelist <- utils::head(filelist, 1)
       }
     if (!"last" %in% year) {
-      filelist[which(filelist$year <= year), match_year] <- "LE"
-      filelist[which(filelist$month <= month), match_month] <- "LE"
+      filelist[which(filelist$year <= year), "match_year"] <- "LE"
+      filelist[which(filelist$month <= month), "match_month"] <- "LE"
       filelist <- subset(filelist, filelist$match_year == "LE" & filelist$match_month == "LE")
-      filelist <- head(filelist, 1)
+      filelist <- utils::head(filelist, 1)
     }
   }
-  
+
   return(filelist)
 }
