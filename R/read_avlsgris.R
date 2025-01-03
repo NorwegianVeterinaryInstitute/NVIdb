@@ -84,11 +84,10 @@ read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder"
 
   # Check if any version of the register was found and give an ERROR if not
   NVIcheckmate::assert_data_frame(filelist, min.rows = 1,
-                                  comment = paste("No versions of Produksjonstilskudd available for year",
+                                  comment = paste("No versions of 'avlsgris' available for year",
                                                   year,
                                                   "and month",
-                                                  month,
-                                                  "."))
+                                                  month))
 # READ DATA FROM THE SELECTED FILE
   # Read the colclasses
    colclasses <- standardize_columns(file.path(from_path, filelist[1, "filename"]),
