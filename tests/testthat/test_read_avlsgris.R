@@ -3,6 +3,9 @@ library(testthat)
 library(checkmate)
 
 test_that("read_avlsgris", {
+  # Test if access to NVI internal files
+  skip_if_not(dir.exists(set_dir_NVI("FAG")))
+  
   avlsgris <- read_avlsgris(year = 2020, month = "11")
   test_data_frame(avlsgris, nrows = 90)
   
@@ -26,6 +29,9 @@ test_that("Argument testing in read_avlsgris", {
 
 
 test_that("Errors in read_avlsgris", {
+  # Test if access to NVI internal files
+  skip_if_not(dir.exists(set_dir_NVI("FAG")))
+  
   linewidth <- options("width")
   options(width = 80)
   
