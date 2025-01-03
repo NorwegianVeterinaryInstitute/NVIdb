@@ -73,7 +73,8 @@ read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder"
   
   
   
-  # READ IN ALL FILES IN THE DIRECTORY AND MAKE A LIST OF THE SELECTED VERSIONS OF EXTRACTS FROM PKODEREGISTERET
+  # READ IN ALL FILES IN THE DIRECTORY AND MAKE A DATA FRAME OF THE SELECTED FILE NAMES
+  # Read data for the selected year and months 
   filelist <- select_files_for_date(from_path = from_path,
                                     filename_text = c("avlsgris"),
                                     file_extension = "csv",
@@ -81,8 +82,6 @@ read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder"
                                     month = month,
                                     extracted_date = NULL)
   
-  # Read data for the selected year and months from Pkoderegisteret and
-  # combine into one data frame
   # Check if any version of the register was found and give an ERROR if not
   NVIcheckmate::assert_data_frame(filelist, min.rows = 1,
                                   comment = paste("No versions of Produksjonstilskudd available for year",
@@ -90,51 +89,21 @@ read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder"
                                                   "and month",
                                                   Pkode_month,
                                                   "."))
-  for (i in 1:dim(filelist)[1]) {
-    
-    # Identifies column names with fylke, kommune and prodnr
-    # thereby these are flexible if input files changes.
-    colchar <- utils::read.csv2(file.path(set_dir_NVI("Prodtilskudd"), "FormaterteData", filelist[i, "filename"]),
-                                header = FALSE,
-                                nrow = 1,
-                                fileEncoding = "UTF-8")
-    
-    colchar <- colchar[which(regexpr("kom", colchar, ignore.case = TRUE) > 0 |
-                               regexpr("fylk", colchar, ignore.case = TRUE) > 0 |
-                               regexpr("prodn", colchar, ignore.case = TRUE) > 0)]
-    
-    colchars <- as.vector(rep("character", length(colchar)))
-    names(colchars) <- colchar
-    
-    # read single files
-    # tempdf <- read_csv_file(filename = filelist[i, "filename"],
-    #                         from_path = from_path,
-    #                         options = list(colClasses = colchars,
-    #                                        fileEncoding = "UTF-8"))
-    tempdf <- data.table::fread(file = file.path(from_path, filelist[i, "filename"]),
-                                colClasses = colchars,
+# READ DATA FROM THE SELECTED FILE
+  # Read the colclasses
+   colclasses <- standardize_columns(file.path(from_path, filelist[1, "filename"]),
+                                     dbsource = "avlsgris",
+                                     property = "colclasses")
+
+   # Read data
+    df1 <- data.table::fread(file = file.path(from_path, filelist[1, "filename"]),
+                                colClasses = colclasses,
                                 encoding = "UTF-8",
                                 showProgress = FALSE,
                                 data.table = FALSE,
                                 ...)
-    if (exists("df1")) {
-      df1[setdiff(names(tempdf), names(df1))] <- NA
-      tempdf[setdiff(names(df1), names(tempdf))] <- NA
-      df1 <- rbind(df1, tempdf)
-    } else {
-      df1 <- tempdf
-    }
-  }
-  
-  # TO DO: COMBINE SPRING AND AUTOMN INTO ONE FILE IF month = "both"
-  
-  # Standardize column names
-  # To be replaced by standardizing column names in the source files
-  columnnames <- colnames(df1)
-  columnnames <- sub("Prodnr", "prodnr", columnnames)
-  colnames(df1) <- columnnames
-  
-  # Return dataframe with data for all selected year and months
+
+  # Return data frame with data
   return(df1)
 }
 
@@ -150,23 +119,26 @@ read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder"
 #'     file name. The routine assumes that the first number in the file name
 #'     that can be a year, is the year (\%Y), year_month (\%Y\%m) or 
 #'     year_month_day (\%Y\%m\%d) for the register date. The register date 
-#'     is extracted from the file name and the correct source file(s) are 
-#'     thereafter selected. 
+#'     is extracted from the file name and the file name of correct source 
+#'     file(s) are thereafter selected. 
 #'     
-#'     If the either the last version of the 
-#'     register or the last version at or before the given year and month 
-#'     is selected.
-#'     extracts from Søknad om register
-#'     for produksjonstilskudd into a data frame. The function gives options to
-#'     select year and month and path for the files. The function is called from
-#'     \code{read_Prodtilskudd} and \code{copy_Prodtilskudd}.
+#'     The function is called from \code{read_avlsgris}.
 #'
-#' @param from_path Path for the source translation table for PJS-codes
-#' @param Pkode_year The year(s) from which the register should be read. Options is "last", or a vector with one or more years.
-#' @param Pkode_month the month for which the register should be read. The options are c("05", "10", "both", "last") for Pkode_year = 2017
-#'     and c("03", "10", "both", "last") for Pkode_year >= 2018.
+#' @param from_path [\code{character(1)}]\cr
+#'     Path for the files.
+#' @param filename_text [\code{character}]\cr
+#' @param file_extension [\code{character}]\cr
+#' @param year [\code{character}] | [\code{numeric}]\cr
+#' The year(s) from which the register should be read. Options is "last", or a 
+#'     vector with one or more years.
+#' @param month [\code{character}]\cr
+#'     The month for which the register should be read, see details. Defaults to
+#'     \code{NULL}.
+#' @param day [\code{character}]\cr
+#' @param match_date [\code{character(1)}]\cr 
+#' @param extracted_date [\code{character(1)}]\cr
 #'
-#' @return A data frame with filenames of the files with the selected extracts of Prodtilskudd.
+#' @return A data frame with file names of the files that should be selected.
 #'
 #' @author Petter Hopp Petter.Hopp@@vetinst.no
 #' @examples
