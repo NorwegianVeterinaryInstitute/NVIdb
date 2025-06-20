@@ -52,8 +52,23 @@ set_dir_NVI <- function(datasource,
   # SETTING THE PATH ----
   # The paths are defined in the package NVIconfig
   pathname <- unname(NVIconfig:::path_NVI[datasource])
+  
+  # To ensure that old versions of NVIconfig will still work
+  if (!isTRUE(NVIcheckmate::check_package("NVIconfig", version = "0.9.0"))) {
+    pathname <- sub("//vetinst.no/dfs-felles/", "", pathname)
+  }
+  
+  # Path to StasjonK if on Windows
+  if (Sys.info()["sysname"] == "Windows") {
+    pathname <- file.path("//vetinst.no/dfs-felles", pathname)
+  # Path to StasjonK if on posit
+  } else {
+    pathname <- file.path(Sys.getenv("HOME"), pathname)
+  }
+  # Remove slash
   if (isFALSE(slash)) {
     pathname <- cut_slash(pathname)
   }
   return(pathname)
 }
+
