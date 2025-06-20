@@ -157,8 +157,24 @@ select_file_for_date <- function(from_path,
                                   day = NULL,
                                   match_date = "last_before",
                                   extracted_date = NULL) {
-
-  # READ ALL FILES IN DIRECTORY WITH A FILENAME IN ACCORD WITH filename_text AND file_extension
+# ALTERNATIVE
+  select_files <- function(from_path = file.path(NVIdb::set_dir_NVI("Ekst"), 
+                                                 "Purkeringer", "FormaterteData"),
+                           partial_file_name,
+                           extension = "csv",
+                           year = 2024,
+                           month = "11",
+                           per_year = year,
+                           per_month = month,
+                           per_date) {
+    # SELECT FILES FROM ALL FILES IN A DIRECTORY
+    # Create list of all files in the directory 
+    # REATE FILE LIST WITH IN THE DIRECTORY AND SELECT MAKE A LIST OF THE LAST VERSION OF ALL UTREKK FRO PKODEREGISTERET
+    filelist <- as.data.frame(list("filename" = list.files(path = from_path, 
+                                                           pattern = paste0("\\.", extension, "$"),
+                                                           ignore.case = TRUE)))
+    
+    # READ ALL FILES IN DIRECTORY WITH A FILENAME IN ACCORD WITH filename_text AND file_extension
   # Read filelist
   filelist <- list.files(path = from_path,
                          pattern = filename_text[1],
@@ -175,6 +191,10 @@ select_file_for_date <- function(from_path,
   filelist$extension <- tools::file_ext(filelist$filename)
   filelist <- subset(filelist, filelist$extension %in% file_extension)
 
+  
+  
+  
+  
   # IDENTIFY YEAR, MONTH AND DATE IN FILENAME
   filelist$position <- regexpr(pattern = "[_[:space:]]20", filelist[, "filename"])
   filelist$date <- as.Date(substr(filelist$filename, filelist$position + 1, filelist$position + 9), "%Y%m%d")
