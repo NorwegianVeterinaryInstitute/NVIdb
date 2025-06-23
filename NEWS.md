@@ -2,22 +2,7 @@
 
 ## New features:
 
--
-
-
-## Bug fixes:
-
--
-
-
-## Other changes:
-
--
-
-
-## BREAKING CHANGES:
-
--
+- `set_dir_NVI` is updated to give correct path also when working on Workbench
 
 
 # NVIdb 0.13.1 - (2024-12-19)
