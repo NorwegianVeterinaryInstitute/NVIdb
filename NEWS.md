@@ -1,3 +1,10 @@
+# NVIdb 0.13.1.9000 - (2024-##-##)
+
+## New features:
+
+- `set_dir_NVI` is updated to give correct path also when working on Workbench
+
+
 # NVIdb 0.13.1 - (2024-12-19)
 
 ## New features:

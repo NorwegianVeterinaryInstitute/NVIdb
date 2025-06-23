@@ -1,7 +1,7 @@
 Package: NVIdb
 Title: Tools to facilitate the use of NVI's databases
-Version: 0.13.1
-Date: 2024-12-19
+Version: 0.13.1.9000
+Date: 2024-##-##
 Authors@R: 
   c(person(given = "Petter",
            family = "Hopp",
@@ -39,7 +39,7 @@ Imports:
     snakecase,
     stats,
     utils,
-    NVIcheckmate (>= 0.7.0)
+    NVIcheckmate (>= 0.8.0)
 Suggests:
     covr,
     desc,
@@ -61,7 +61,7 @@ LazyData: true
 Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = FALSE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 VignetteBuilder: 
     knitr,
     R.rsp
