@@ -60,10 +60,10 @@ set_dir_NVI <- function(datasource,
 
   # Path to StasjonK if on Windows
   if (Sys.info()["sysname"] == "Windows") {
-    pathname <- file.path("//vetinst.no/dfs-felles", pathname)
+    pathname <- paste0("//vetinst.no/dfs-felles/", pathname)
   # Path to StasjonK if on posit
   } else {
-    pathname <- file.path(Sys.getenv("HOME"), pathname)
+    pathname <- paste0(Sys.getenv("HOME"), "/", pathname)
   }
   # Remove slash
   if (isFALSE(slash)) {
