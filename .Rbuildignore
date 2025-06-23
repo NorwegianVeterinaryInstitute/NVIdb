@@ -14,3 +14,6 @@
 ^\.Rhistory$
 ^CODE_OF_CONDUCT\.md
 ^styler$
+^NVIdb\.Rcheck$
+^NVIdb.*\.tar\.gz$
+^NVIdb.*\.tgz$
