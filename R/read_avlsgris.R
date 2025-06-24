@@ -108,7 +108,7 @@ read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder"
 
 ###   ----
 
-### select_prodtilskudd_files ----
+### select_files ----
 
 
 #' @title Selects files based on date in file name
@@ -149,40 +149,24 @@ read_avlsgris <- function(from_path = file.path(set_dir_NVI("EksterneDatakilder"
 #' }
 #' @keywords internal
 
-select_file_for_date <- function(from_path,
-                                  filename_text,
-                                  file_extension,
-                                  year,
-                                  month = "12",
-                                  day = NULL,
-                                  match_date = "last_before",
-                                  extracted_date = NULL) {
-# ALTERNATIVE
-  select_files <- function(from_path = file.path(NVIdb::set_dir_NVI("Ekst"), 
+  select_files <- function(from_path = file.path(NVIdb::set_dir_NVI("Ekst", slash = FALSE), 
                                                  "Purkeringer", "FormaterteData"),
-                           partial_file_name,
-                           extension = "csv",
-                           year = 2024,
+                           partial_filename = c("Purkering", "per"),
+                           file_extension = "csv",
+                           year = 2023,
                            month = "11",
-                           per_year = year,
-                           per_month = month,
-                           per_date) {
-    # SELECT FILES FROM ALL FILES IN A DIRECTORY
-    # Create list of all files in the directory 
-    # REATE FILE LIST WITH IN THE DIRECTORY AND SELECT MAKE A LIST OF THE LAST VERSION OF ALL UTREKK FRO PKODEREGISTERET
-    filelist <- as.data.frame(list("filename" = list.files(path = from_path, 
-                                                           pattern = paste0("\\.", extension, "$"),
-                                                           ignore.case = TRUE)))
-    
+                           day = NULL,
+                           nearest = "after",
+                           extracted_date = NULL) {
     # READ ALL FILES IN DIRECTORY WITH A FILENAME IN ACCORD WITH filename_text AND file_extension
   # Read filelist
   filelist <- list.files(path = from_path,
-                         pattern = filename_text[1],
+                         pattern = partial_filename[1],
                          ignore.case = TRUE,
                          include.dirs = FALSE)
   # Select if more criteria than one in filename
-  if (length(filename_text) > 1) {
-    for (text in filename_text[2:length(filename_text)]) {
+  if (length(partial_filename) > 1) {
+    for (text in partial_filename[2:length(partial_filename)]) {
       filelist <- filelist[grepl(pattern = text, x = filelist, ignore.case = TRUE)]
     }
   }
@@ -196,26 +180,40 @@ select_file_for_date <- function(from_path,
   
   
   # IDENTIFY YEAR, MONTH AND DATE IN FILENAME
-  filelist$position <- regexpr(pattern = "[_[:space:]]20", filelist[, "filename"])
-  filelist$date <- as.Date(substr(filelist$filename, filelist$position + 1, filelist$position + 9), "%Y%m%d")
-  filelist$year <- format(filelist$date, "%Y")
-  filelist$month <- format(filelist$date, "%m")
-
-# SORT DATA FROM LATEST TO FIRST
-  filelist <- filelist[order(filelist$year, filelist$month, filelist$date, decreasing = TRUE), ]
-
-  if (is.null(extracted_date)) {
-    # filelist <- subset(filelist, filelist$uttrekk_dato == filelist$x)
-    if ("last" %in% year) {
+  filelist$position <- regexpr(pattern = "per[_[:space:]][12]", filelist[, "filename"])
+   rownr <- grepl(pattern = "per[_[:space:]][12][[:digit:]]{3}", filelist[, "filename"])
+  rownr <- grepl(pattern = "per[_[:space:]][12][[:digit:]]{5}", filelist[, "filename"])
+  filelist[rownr, "date"] <- as.Date(paste0(substr(filelist[rownr, "filename"], 
+                                                   filelist[rownr, "position"] + 4, 
+                                                   filelist[rownr, "position"] + 9), 
+                                            "01"), 
+                                     "%Y%m%d")
+ rownr <- grepl(pattern = "per[_[:space:]][12][[:digit:]]{7}", filelist[, "filename"])
+  filelist[rownr, "date"] <- as.Date(substr(filelist[rownr, "filename"], 
+                                            filelist[rownr, "position"] + 4, 
+                                            filelist[rownr, "position"] + 11), 
+                                     "%Y%m%d")
+  
+  filelist$per_year <- format(filelist$date, "%Y")
+  filelist$per_month <- format(filelist$date, "%m")
+  
+  # Find best match
+  if (nearest == "before") {
+  filelist <- filelist[order(filelist$per_year, filelist$per_month, filelist$date, decreasing = TRUE), ]
+      filelist <- subset(filelist, 
+                         filelist$per_year < year |
+                           (filelist$per_year == year & filelist$per_month <= month))
       filelist <- utils::head(filelist, 1)
-      }
-    if (!"last" %in% year) {
-      filelist[which(filelist$year <= year), "match_year"] <- "LE"
-      filelist[which(filelist$month <= month), "match_month"] <- "LE"
-      filelist <- subset(filelist, filelist$match_year == "LE" & filelist$match_month == "LE")
-      filelist <- utils::head(filelist, 1)
-    }
   }
-
+  
+  if (nearest == "after") {
+  filelist <- filelist[order(filelist$per_year, filelist$per_month, filelist$date, decreasing = FALSE), ]
+      filelist <- subset(filelist, 
+                         filelist$per_year > year |
+                           (filelist$per_year == year & filelist$per_month >= month))
+      filelist <- utils::head(filelist, 1)
+  }
+  
+ 
   return(filelist)
 }
