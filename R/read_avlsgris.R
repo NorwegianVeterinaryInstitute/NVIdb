@@ -199,8 +199,8 @@ find_file_near_date <- function(from_path = file.path(NVIdb::set_dir_NVI("Ekst",
   }
   filelist <- data.frame("filename" = filelist)
   # Select extension
-  filelist$extension <- tools::file_ext(filelist$filename)
-  filelist <- subset(filelist, filelist$extension %in% file_extension)
+  filelist$file_extension <- tools::file_ext(filelist$filename)
+  filelist <- subset(filelist, filelist$file_extension %in% extension)
   
   # IDENTIFY YEAR, MONTH AND DATE IN FILENAME
   filelist$position <- regexpr(pattern = "per[_[:space:]][12]", filelist[, "filename"])
@@ -225,7 +225,7 @@ find_file_near_date <- function(from_path = file.path(NVIdb::set_dir_NVI("Ekst",
     filelist[is.na(filelist$per_day), "per_day"] <- "01"
   }
   if (nearest_wanted == "after") {
-    filelist[is.na(filelist$per_month), "perd_month"] <- "12"
+    filelist[is.na(filelist$per_month), "per_month"] <- "12"
     rownr <- which(is.na(filelist$per_day))
     filelist[rownr, "per_day"] <- sapply(as.Date(paste(filelist[rownr, "per_year"],
                                                        filelist[rownr, "per_month"],
@@ -233,6 +233,7 @@ find_file_near_date <- function(from_path = file.path(NVIdb::set_dir_NVI("Ekst",
                                          FUN = last_date_in_month,
                                          output = "day")
   }
+  filelist$per_date <- as.Date(paste(filelist$per_year, filelist$per_month, filelist$per_day, sep = "-"))
   
   # TRANSFORM INPUT TO wanted_date ----
   if (is.null(wanted_date)) {
@@ -245,12 +246,26 @@ find_file_near_date <- function(from_path = file.path(NVIdb::set_dir_NVI("Ekst",
   # FIND BEST MATCH ----
   if (nearest_wanted == "before") {
     filelist <- subset(filelist, filelist$per_date <= wanted_date)
+    NVIcheckmate::assert_data_frame(
+      filelist, 
+      min.rows = 1,
+      comment = paste0("No versions of the register fulfilling the selection ",
+                       "criteria is available with date before the wanted date: ",
+                       wanted_date,
+                       "."))
     filelist <- filelist[order(filelist$per_date, decreasing = TRUE), ]
     filelist <- utils::head(filelist, 1)
   }
   
   if (nearest_wanted == "after") {
     filelist <- subset(filelist, filelist$per_date >= wanted_date)
+    NVIcheckmate::assert_data_frame(
+      filelist, 
+      min.rows = 1,
+      comment = paste0("No versions of the register fulfilling the selection ",
+                       "criteria is available with date after the wanted date: ",
+                       wanted_date,
+                       "."))
     filelist <- filelist[order(filelist$per_date), ]
     filelist <- utils::head(filelist, 1)
   }
@@ -297,11 +312,10 @@ find_file_near_date <- function(from_path = file.path(NVIdb::set_dir_NVI("Ekst",
 #' }
 #' @keywords internal
 #' 
-
 last_date_in_month <- function(date = NULL, year = NULL, month = NULL, output = "date") {
   
   # PREPARE INPUT BEFORE ARGUMENT CHECKING
-  if (exists("year") && !is.null(year) && !is.na(year)) {
+  if (exists("year") && !all(is.null(year)) && !all(is.na(year))) {
     year <- as.numeric(year)
   }
   
@@ -358,5 +372,4 @@ last_date_in_month <- function(date = NULL, year = NULL, month = NULL, output = 
   # RETURN RESULT ----
   return(days)
 }
-
 
