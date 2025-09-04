@@ -86,6 +86,55 @@ find_file_near_date <- function(from_path,
                                 wanted_month = NULL,
                                 nearest_wanted = "before") {
   
+  # PREPARE ARGUMENT ----
+  # Removing ending "/" and "\\" from pathnames
+  from_path <- sub("/+$|\\\\+$", "", from_path)
+  
+  # ARGUMENT CHECKING ----
+  # Object to store check-results
+  checks <- checkmate::makeAssertCollection()
+  # Perform checks
+  # from_path
+  checkmate::assert_character(from_path, len = 1, min.chars = 1, add = checks)
+  checkmate::assert_directory_exists(from_path, access = "r", add = checks)
+  # extension
+  checkmate::assert_character(extension, len = 1, min.chars = 1, add = checks)
+  # date
+  checkmate::assert_date(wanted_date, 
+                         null.ok = TRUE, 
+                         len = 1,
+                         lower = as.Date("1970-01-01"), upper = Sys.Date(),
+                         add = checks)
+  # year
+  checkmate::assert_integerish(wanted_year,
+                               null.ok = TRUE,
+                               len = 1,
+                               lower = 1970, upper = as.numeric(format(Sys.Date(), "%Y")),
+                               all.missing = FALSE, any.missing = FALSE,
+                               add = checks)
+  # month
+  checkmate::assert_character(wanted_month, 
+                              len = 1,
+                              null.ok = TRUE,
+                              add = checks)
+  checkmate::assert_subset(wanted_month, 
+                           choices = c("01", "02", "03", "04", "05", "06",
+                                       "07", "08", "09", "10", "11", "12"), 
+                           empty.ok = TRUE,
+                           add = checks)
+  
+  NVIcheckmate::assert(NVIcheckmate::check_non_null(list(wanted_date, wanted_year)),
+                       NVIcheckmate::check_non_null(list(wanted_date, wanted_month)),
+                       combine = "and",
+                       comment = "You must input either the date or the year and month.",
+                       add = checks)
+  # nearest_wanted
+  checkmate::assert_subset(nearest_wanted, 
+                           choices = c("after", "before"), 
+                           add = checks)
+  # Report check-results
+  checkmate::reportAssertions(checks)
+  
   # READ ALL FILES IN DIRECTORY WITH A FILENAME IN ACCORD WITH file name_text AND file_extension
   # Read file list
   filelist <- list.files(path = from_path,
