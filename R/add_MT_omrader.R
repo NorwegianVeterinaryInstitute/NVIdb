@@ -122,6 +122,7 @@
 #' }
 #'
 add_MT_omrader <- function(data,
+                           fag = NULL,
                            translation_table = komnr_2_MT_omrader,
                            code_column = c("komnr"),
                            new_column = c("MT_avdelingnr", "MT_avdeling", "MT_regionnr", "MT_region"),
@@ -132,14 +133,56 @@ add_MT_omrader <- function(data,
   # Thereby, the following code can assume these to be named vectors
   code_column <- set_name_vector(code_column)
   new_column <- set_name_vector(new_column)
+  
+  # GENERATE TRANSLATION TABLE FOR fag
+  text <- "Produkt_fag; fag
+Akvakultur; Akvakultur
+Akvakultur; Laks
+Akvakultur; Ørret
+Akvakultur; Skjell
+Landdyr - produksjonsdyr; Landdyr  - produksjonsdyr                   
+Landdyr - produksjonsdyr; Storfe                   
+Landdyr - produksjonsdyr; Sau                   
+Landdyr - produksjonsdyr; Geit                   
+Landdyr - produksjonsdyr; Svin                  
+Landdyr - produksjonsdyr; Gris                   
+Landdyr - produksjonsdyr; Hjort                  
+Landdyr - produksjonsdyr; Vilt                   
+Landdyr - kjæledyr og hest; Landdyr - kjæledyr og hest                   
+Landdyr - kjæledyr og hest; Hund                   
+Landdyr - kjæledyr og hest; Katt                   
+Landdyr - kjæledyr og hest; Hest                   
+Slakteri rødt kjøtt; Slakteri rødt kjøtt      
+Slakteri rødt kjøtt; Storfeslakt                   
+Slakteri rødt kjøtt; Saueslakt                   
+Slakteri rødt kjøtt; Geiteslakt                   
+Slakteri rødt kjøtt; Svineslakt                  
+Slakteri rødt kjøtt; Griseslakt                   
+Slakteri rødt kjøtt; Hjorteslakt                  
+Slakteri rødt kjøtt; Hesteslakt                   
+Slakteri rødt kjøtt; rødt kjøtt                         
+Slakteri hvitt kjøtt; Slakteri hvitt kjøtt                         
+Slakteri hvitt kjøtt; hvitt kjøtt                         
+Slakteri hvitt kjøtt; fjørfeslakt                        
+Mat - matproduksjon - kjeder; Mat - matproduksjon - kjeder                
+Mat - matproduksjon; Mat - matproduksjon                          
+Mat - servering og omsetning - kjeder; Mat - servering og omsetning - kjeder       
+Mat - servering og omsetning; Mat - servering og omsetnin                 
+Grensekontroll; Grensekontroll                              
+Mat - samhandel/import - ikke grensekontroll; Mat - samhandel/import - ikke grensekontroll 
+Mat - kosttilskudd og kosmetikk; Mat - kosttilskudd og kosmetikk
+Mat - kosttilskudd og kosmetikk; Kosttilskudd
+Mat - kosttilskudd og kosmetikk; Kosmetikk
+Planter; Planter                                      
+Fôr og biprodukter; Fôr og biprodukter
+Fôr og biprodukter; Fôr
+Fôr og biprodukter; Biprodukter
+Drikkevann; Drikkevann"
+  
+  # Read the string into a data frame
+  produkt_fag <- read.table(text = text, sep = ";", header = TRUE)
+  
 
-  # # ARGUMENT CHECKING ----
-  # assert_add_function(data = data,
-  #                     translation_table = translation_table,
-  #                     code_column = code_column,
-  #                     new_column = new_column,
-  #                     position = position,
-  #                     overwrite = overwrite)
   # ARGUMENT CHECKING ----
   # Object to store check-results
   checks <- checkmate::makeAssertCollection()
@@ -156,6 +199,10 @@ add_MT_omrader <- function(data,
                                       several.ok = TRUE,
                                       ignore.case = FALSE,
                                       add = checks)
+  # fag
+  checks <- checkmate::assert_choice(fag,
+                                     choices = produkt_fag$fag,
+                                     null.ok = TRUE)
   # Report check-results
   checkmate::reportAssertions(checks)
 
