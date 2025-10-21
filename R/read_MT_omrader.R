@@ -74,6 +74,8 @@ read_MT_omrader <- function(filename = list("komnr_2_MT_avdeling.csv", "MT_omrad
   colnames(komnr_2_MT_enhet)[which(colnames(komnr_2_MT_enhet) == "Enhet_kode")] <- "MT_enhetnr"
   colnames(komnr_2_MT_enhet)[which(colnames(komnr_2_MT_enhet) == "Enhet")] <- "MT_enhet"
   colnames(komnr_2_MT_enhet)[which(colnames(komnr_2_MT_enhet) == "Produkt_fag")] <- "produkt_fag"
+  # Removes double spaces from original source file
+  komnr_2_MT_enhet$produkt_fag <- gsub("  ", " ", komnr_2_MT_enhet$produkt_fag, fixed = TRUE)
   
   
   # COMBINE FOR BOTH PERIODS ----
