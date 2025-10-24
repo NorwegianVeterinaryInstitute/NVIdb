@@ -2,7 +2,7 @@
 
 ## New features:
 
--
+- `add_MT_omrader` can now be used for finding MT-areas in accordance with the new organisation of MT from 2025. 
 
 
 ## Bug fixes:
@@ -17,7 +17,14 @@
 
 ## BREAKING CHANGES:
 
--
+- `set_PAT`, `get_PAT`, and `remove_PAT` are defunct. Functions from the package \code{gitcreds} should be used instead. See `NVIdb-defunct` (help("NVIdb-defunct")).
+
+- The wrapper functions `login_EOS`, `login_by_input_EOS`, and `login_by_credentials_EOS` are defunct. Use the corresponding login-functions with the argument `dbservice` = "EOS" instead. See `NVIdb-defunct` (help("NVIdb-defunct")).
+
+- The wrapper functions `login_PJS`, `login_by_input_PJS`, and `login_by_credentials_PJS` are defunct. Use the corresponding login-functions with the argument `dbservice` = "PJS" instead. See `NVIdb-defunct` (help("NVIdb-defunct")).
+
+- The wrapper function `set_credentials_EOS` is defunct. Use `set_credentials(dbservice = "EOS")` instead. See `NVIdb-defunct` (help("NVIdb-defunct")).
+
 
 
 # NVIdb 0.14.0 - (2025-09-19)
