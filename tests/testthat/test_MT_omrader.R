@@ -20,11 +20,11 @@ test_that("Copy MT-omrader", {
 test_that("Correct merging of MT-avdeling og MT-region basert på organisering fra 2025", {
   # skip if no connection to 'FAG' have been established
   skip_if_not(dir.exists(set_dir_NVI("FAG")))
-  
+
   # Load translation table for MT_omrader
   komnr_2_MT_omrader <- read_MT_omrader()
   # kommune_fylke <- read_kommune_fylke()
-  
+
   # Make a dataframe with kommunenr that should be translated
   kommuner <- as.data.frame(list("komnr" = c("0123", "3014", "3118", "0301", "1142", "5001")))
 
@@ -34,8 +34,8 @@ test_that("Correct merging of MT-avdeling og MT-region basert på organisering f
          "MT_avdeling" = c("Avdeling landdyr", "Avdeling landdyr", "Avdeling landdyr",
                            "Avdeling landdyr", "Avdeling landdyr", "Avdeling landdyr"),
          "MT_enhetnr" = c("M42250", "M42250", "M42250", "M42250", "M42220", "M42220"),
-         "MT_enhet" = c("Seksjon produksjonsdyr øst", "Seksjon produksjonsdyr øst", 
-                        "Seksjon produksjonsdyr øst", "Seksjon produksjonsdyr øst", 
+         "MT_enhet" = c("Seksjon produksjonsdyr øst", "Seksjon produksjonsdyr øst",
+                        "Seksjon produksjonsdyr øst", "Seksjon produksjonsdyr øst",
                         "Seksjon produksjonsdyr midt", "Seksjon produksjonsdyr midt"),
          "komnr" = c("0123", "3014", "3118", "0301", "1142", "5001")))
 
@@ -48,21 +48,21 @@ test_that("Correct merging of MT-avdeling og MT-region basert på organisering f
                                   new_column = c("MT_avdelingnr", "MT_avdeling", "MT_enhetnr", "MT_enhet"),
                                   position = "first"),
                    correct_result)
-  
+
 })
 
 
 test_that("Correct merging of MT-avdeling og MT-region basert på kommunenr for 2024", {
   # skip if no connection to 'FAG' have been established
   skip_if_not(dir.exists(set_dir_NVI("FAG")))
-  
+
   # Load translation table for MT_omrader
   MT_omrader <- read_MT_omrader()
-  
+
   # Make a dataframe with kommunenr that should be translated
   kommuner <- as.data.frame(c("0123", "0301", "1142", "5001"), stringsAsFactors = FALSE)
   colnames(kommuner) <- "komnr"
-  
+
   # Make a dataframe with the correct result
   correct_result <- cbind(as.data.frame(c("M21000", "M21000", "M23000", "M24000"), stringsAsFactors = FALSE),
                           as.data.frame(c("Region Stor-Oslo", "Region Stor-Oslo", "Region Sør og Vest", "Region Midt"), stringsAsFactors = FALSE),
@@ -70,7 +70,7 @@ test_that("Correct merging of MT-avdeling og MT-region basert på kommunenr for 
                           as.data.frame(c("Østfold og Follo", "Oslo, Asker og Bærum", "Sør-Rogaland, Sirdal og Flekkefjord", "Trondheim og omland"), stringsAsFactors = FALSE),
                           as.data.frame(c("0123", "0301", "1142", "5001"), stringsAsFactors = FALSE))
   colnames(correct_result) <- c("MT_regionnr", "MT_region", "MT_avdelingnr", "MT_avdeling", "komnr")
-  
+
   # Compare Add fylke, current fylkenr and current fylke with correct result
   expect_identical(add_MT_omrader(data = kommuner,
                                   year = 2024,
@@ -79,7 +79,7 @@ test_that("Correct merging of MT-avdeling og MT-region basert på kommunenr for 
                                   new_column = c("MT_regionnr", "MT_region", "MT_avdelingnr", "MT_avdeling"),
                                   position = "first"),
                    correct_result)
-  
+
 })
 
 
