@@ -22,6 +22,9 @@
 #' Data often only includes codes that should be translated into the description text. These functions perform the translation for
 #' PJS-codes and codes like komnr.
 #'
-#' @docType package
-#' @name NVIdb
+#' @keywords internal
+"_PACKAGE"
+# #' @docType package
+#' @aliases NVIdb-package
+# #' @name NVIdb
 NULL
