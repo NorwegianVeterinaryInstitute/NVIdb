@@ -239,14 +239,10 @@ Drikkevann;Drikkevann"
   translation_table[which(is.na(translation_table$to_year)), "to_year"] <- as.numeric(format(Sys.Date(), "%Y")) + 1
   translation_table <- subset(translation_table, translation_table$from_year <= year & translation_table$to_year >= year)
 
-#   if (2004 <= year & 2024 >= year) {
-#     translation_table[, c("MT_divisjonnr", "MT_divisjon", )] <- "MT_region"
-#     colnames(translation_table)[which(colnames(translation_table) == "MT_divisjonnr")] <- "MT_regionnr"
-# }
   if (2025 <= year) {
     produkt_fag <- produkt_fag[tolower(produkt_fag$input_fag) == tolower(fag), ]
     translation_table <- translation_table[translation_table$produkt_fag == produkt_fag$produkt_fag, ]
-}
+  }
 
   # unique() is necessary to avoid duplicate rows when code_column is not "komnr"
   code_2_new <- unique(translation_table[, c(unname(code_column), unname(new_column))])
@@ -265,7 +261,6 @@ Drikkevann;Drikkevann"
                          overwrite = overwrite,
                          n_columns_at_once = length(new_column)
   )
-
 
   return(data)
 }
