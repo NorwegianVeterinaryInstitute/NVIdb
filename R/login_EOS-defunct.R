@@ -96,7 +96,7 @@ NULL
 #' @rdname NVIdb-defunct
 #' @keywords internal
 #'
-login_EOS <- function(dbinterface = NULL, ...) {
+login_EOS <- function(...) {
 
   .Defunct(new = "login('EOS')",
            package = "NVIdb",
@@ -135,7 +135,7 @@ login_EOS <- function(dbinterface = NULL, ...) {
 #' @export
 #' @rdname NVIdb-defunct
 
-login_by_input_EOS <- function(dbinterface = NULL, ...) {
+login_by_input_EOS <- function(...) {
 
   .Defunct(new = "login_by_input('EOS')",
            package = "NVIdb",
@@ -170,7 +170,7 @@ login_by_input_EOS <- function(dbinterface = NULL, ...) {
 #' @export
 #' @rdname NVIdb-defunct
 
-login_by_credentials_EOS <- function(dbinterface = NULL, ...) {
+login_by_credentials_EOS <- function(...) {
 
   .Defunct(new = "login_by_credentials('EOS')",
            package = "NVIdb",
