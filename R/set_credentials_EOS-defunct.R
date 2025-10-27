@@ -30,40 +30,31 @@
 #'
 #' @seealso \code{\link{login}} and \code{\link{login_by_credentials}}
 #' @author Petter Hopp Petter.Hopp@@vetinst.no
-#' @name set_credentials_EOS-deprecated
+#' @name set_credentials_EOS-defunct
 #' @keywords internal
-#' @examples
-#' \dontrun{
-#' set_credentials(dbservice)
-#'
-#' set_credentials_PJS()
-#'
-#' set_credentials_EOS()
-#'
-#' remove_credentials("PJS")
-#' }
 #'
 NULL
 
 
-#' @title set_credentials_EOS is deprecated
-#' @description \code{set_credentials_EOS} was deprecated from v0.##.# released 2024-##-##.
-#'      The function was rarely used and is an unnecessary wrapper around
-#'      \code{\link{set_credentials}}.
-#' @details The old help pages can be found at \code{help("set_credentials_EOS-deprecated")}.
-#'     Information on deprecated functions can be found at \code{help("NVIdb-deprecated")}.
 #' @export
+#' @rdname NVIdb-defunct
 #' @keywords internal
 #'
-set_credentials_EOS <- function() {
+set_credentials_EOS <- function(...) {
 
-    .Deprecated(new = "set_credentials('EOS')",
-              package = "NVIdb",
-              msg = paste("'set_credentials_EOS' is replaced by 'set_credentials('EOS')'",
-                          "as the wrapper 'set_credentials_EOS'",
-                          "was rarely used and therefore considered unnecessary."))
+  .Defunct(new = "set_credentials('EOS')",
+           package = "NVIdb",
+           msg = paste("'set_credentials_EOS' is replaced by 'set_credentials('EOS')'",
+                       "as the wrapper 'set_credentials_EOS'",
+                       "was rarely used and therefore considered unnecessary."))
 
-  # General function to input username and password for a database service
-  # Set database service to EOS
-  set_credentials(dbservice = "EOS")
+  # .Deprecated(new = "set_credentials('EOS')",
+  #             package = "NVIdb",
+  #             msg = paste("'set_credentials_EOS' is replaced by 'set_credentials('EOS')'",
+  #                         "as the wrapper 'set_credentials_EOS'",
+  #                         "was rarely used and therefore considered unnecessary."))
+  #
+  # # General function to input username and password for a database service
+  # # Set database service to EOS
+  # set_credentials(dbservice = "EOS")
 }
