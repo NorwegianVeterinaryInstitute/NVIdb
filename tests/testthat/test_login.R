@@ -12,16 +12,6 @@ test_that("Log in to db services", {
   expect_true(as.vector(odbc_connected) >= 1)
   RODBC::odbcClose(odbc_connected)
 
-  odbc_connected <- expect_warning(login_PJS(),
-                                regexp = "'login_PJS' is replaced by 'login")
-  expect_true(as.vector(odbc_connected) >= 1)
-  RODBC::odbcClose(odbc_connected)
-
-  odbc_connected <- expect_warning(login_by_credentials_PJS(),
-                                regexp = "'login_by_credentials_PJS' is replaced by 'login_by_credentials")
-  expect_true(as.vector(odbc_connected) >= 1)
-  RODBC::odbcClose(odbc_connected)
-
   options(width = unlist(linewidth))
 })
 
