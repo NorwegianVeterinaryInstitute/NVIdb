@@ -25,26 +25,11 @@ These functions are provided for compatibility with older
     \code{impute_old_when_missing = FALSE} when translating from "prodnr8" to
     other properties.
 
-\code{set_PAT}, \code{get_PAT}, and \code{remove_PAT} was deprecated from
-    v0.11.0 released 2024-01-24. The functions were never taken into use.
-    Functions from the much better package \code{gitcreds} should be used instead.
-
 The arguments \code{missing_art} and \code{file} in \code{set_disease_parameters}
     was deprecated from v0.11.0 released 2024-01-24. These arguments are
     replaced by the more meaningful \code{include_missing_art} and
     \code{selection_parameters}, respectively. If using the old arguments,
     the input will be transferred to the new arguments.
-
-\code{login_EOS}, \code{login_by_input_EOS}, and \code{login_by_credentials_EOS}
-    was deprecated from v0.11.2 released 2024-04-05. The functions were rarely
-    used and are unnecessary wrappers around the login-functions. The
-    login-functions with the argument \code{dbservice} = "EOS" should be used
-    instead, see \code{\link{login}}.
-
-\code{set_credentials_EOS} was deprecated from v0.11.2 released 2024-04-05.
-    The function was rarely used and is an unnecessary wrapper around
-     \code{set_credentials}. \code{\link{set_credentials}} with the argument
-     \code{dbservice} = "EOS" should be used instead.
 
 The arguments \code{FUN} and \code{selection_statement} in \code{retrieve_PJSdata}
     was deprecated from v0.11.2 released 2024-04-05. These arguments should
@@ -53,7 +38,7 @@ The arguments \code{FUN} and \code{selection_statement} in \code{retrieve_PJSdat
     \code{selection_parameters}.
 
 All functions made especially to handle PJS data have been moved to \code{NVIpjsr}
-    and were deprecated from v0.##.# released 2024-##-##. Further development
+    and were deprecated from v0.13.0 released 2024-12-13. Further development
     of these functions will only take place in \code{NVIpjsr}. The following
     functions have been moved:
 \itemize{
@@ -80,14 +65,6 @@ All functions made especially to handle PJS data have been moved to \code{NVIpjs
 \examples{
 \dontrun{
 add_produsent(...) ### -- use add_produsent_properties() instead.
-set_PAT(...) ### -- use gitcreds::gitcreds_set() instead.
-get_PAT(...) ### -- use gitcreds::gitcreds_get() instead.
-remove_PAT(...) ### -- use gitcreds::gitcreds_delete() instead.
-login_EOS(...) ### -- use login("EOS") instead.
-login_by_input_EOS(...) ### -- use login_by_input("EOS") instead.
-login_by_credentials_EOS(...) ### -- use login_by_credentials("EOS") instead.
-set_credentials_EOS(...) ### -- use set_credentials("EOS") instead.
-login_by_credentials_PJS(...) ### -- use login_by_credentials("PJS") instead
 add_PJS_code_description(...) ### -- use NVIpjsr::add_PJS_code_description() instead
 build_query_hensikt(...) ### -- use NVIpjsr::build_query_hensikt() instead
 build_query_one_disease(...) ### -- use NVIpjsr:build_query_one_disease:() instead
@@ -97,7 +74,6 @@ build_sql_select_year(...) ### -- use NVIpjsr::build_sql_select_year() instead
 choose_PJS_levels(...) ### -- use NVIpjsr::choose_PJS_levels() instead
 copy_PJS_code_2_text(...) ### -- use NVIpjsr::copy_PJS_code_2_text() instead
 exclude_from_PJSdata(...) ### -- use NVIpjsr::exclude_from_PJSdata() instead
-login_by_credentials_PJS(...) ### -- use login_by_credentials("PJS") instead
 read_eos_data(...) ### -- use NVIpjsr::read_eos_data() instead
 read_PJS_code_2_text(...) ### -- use NVIpjsr::read_PJS_code_2_text() instead
 retrieve_PJSdata(...) ### -- use NVIpjsr::retrieve_PJSdata() instead
