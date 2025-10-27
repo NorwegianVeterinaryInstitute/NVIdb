@@ -1,3 +1,4 @@
+# library(NVIdb)
 library(testthat)
 
 test_that("errors for defunct functions", {
@@ -15,6 +16,10 @@ test_that("errors for defunct functions", {
 
   expect_error(remove_PAT(),
                regexp = "'set_PAT', 'get_PAT', and 'remove_PAT' should be replaced by",
+               fixed = TRUE)
+
+  expect_error(set_credentials_EOS(),
+               regexp = "'set_credentials_EOS' is replaced by 'set_credentials('EOS')' as",
                fixed = TRUE)
 
   expect_error(login_EOS(),
