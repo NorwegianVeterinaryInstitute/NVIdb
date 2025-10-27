@@ -29,5 +29,17 @@ test_that("errors for defunct functions", {
                regexp = "'login_by_credentials_EOS' is replaced by 'login_by_credentials('EOS')'",
                fixed = TRUE)
 
+  expect_error(login_PJS(),
+               regexp = "'login_PJS' is replaced by 'login('PJS')' as the wrapper",
+               fixed = TRUE)
+
+  expect_error(login_by_input_PJS(),
+               regexp = "'login_by_input_PJS' is replaced by 'login_by_input('PJS')' as",
+               fixed = TRUE)
+
+  expect_error(login_by_credentials_PJS(),
+               regexp = "'login_by_credentials_PJS' is replaced by 'login_by_credentials('PJS')'",
+               fixed = TRUE)
+
   options(width = unlist(linewidth))
 })

@@ -96,9 +96,9 @@ NULL
 #' @rdname NVIdb-defunct
 #' @keywords internal
 #'
-login_EOS <- function(dbinterface = NULL, ...) {
+login_EOS <- function(...) {
 
-  .Defunct(new = "set_PAT",
+  .Defunct(new = "login('EOS')",
            package = "NVIdb",
            msg = paste("'login_EOS' is replaced by 'login('EOS')' as the wrapper 'login_EOS'",
                        "was rarely used and therefore considered unnecessary."))
@@ -135,9 +135,9 @@ login_EOS <- function(dbinterface = NULL, ...) {
 #' @export
 #' @rdname NVIdb-defunct
 
-login_by_input_EOS <- function(dbinterface = NULL, ...) {
+login_by_input_EOS <- function(...) {
 
-  .Defunct(new = "set_PAT",
+  .Defunct(new = "login_by_input('EOS')",
            package = "NVIdb",
            msg = paste("'login_by_input_EOS' is replaced by 'login_by_input('EOS')' as",
                        "the wrapper 'login_by_input_EOS'",
@@ -170,9 +170,9 @@ login_by_input_EOS <- function(dbinterface = NULL, ...) {
 #' @export
 #' @rdname NVIdb-defunct
 
-login_by_credentials_EOS <- function(dbinterface = NULL, ...) {
+login_by_credentials_EOS <- function(...) {
 
-  .Defunct(new = "set_PAT",
+  .Defunct(new = "login_by_credentials('EOS')",
            package = "NVIdb",
            msg = paste("'login_by_credentials_EOS' is replaced by 'login_by_credentials('EOS')'",
                        "as the wrapper 'login_by_credentials_EOS'",
