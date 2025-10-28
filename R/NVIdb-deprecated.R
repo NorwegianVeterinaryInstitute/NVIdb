@@ -48,6 +48,8 @@
 #'   \item \code{standardize_PJSdata}
 #'   \item \code{transform_code_combinations}
 #'   }
+#' Of these, \code{read_eos_data} and \code{standardize_eos_data} were defunct
+#'   from 2025-10-##.
 #'
 #' @param \dots (arguments)
 #' @return (results)
@@ -68,12 +70,10 @@
 #' choose_PJS_levels(...) ### -- use NVIpjsr::choose_PJS_levels() instead
 #' copy_PJS_code_2_text(...) ### -- use NVIpjsr::copy_PJS_code_2_text() instead
 #' exclude_from_PJSdata(...) ### -- use NVIpjsr::exclude_from_PJSdata() instead
-#' read_eos_data(...) ### -- use NVIpjsr::read_eos_data() instead
 #' read_PJS_code_2_text(...) ### -- use NVIpjsr::read_PJS_code_2_text() instead
 #' retrieve_PJSdata(...) ### -- use NVIpjsr::retrieve_PJSdata() instead
 #' select_PJSdata_for_value(...) ### -- use NVIpjsr::select_PJSdata_for_value() instead
 #' set_disease_parameters(...) ### -- use NVIpjsr::set_disease_parameters() instead
-#' standardize_eos_data(...) ### -- use NVIpjsr::standardize_eos_data() instead
 #' standardize_PJSdata(...) ### -- use NVIpjsr::standardize_PJSdata() instead
 #' transform_code_combinations(...) ### -- use NVIpjsr::transform_code_combinations() instead
 #' }
