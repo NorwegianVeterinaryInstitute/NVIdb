@@ -46,5 +46,13 @@ test_that("errors for defunct functions", {
                regexp = "'login_by_credentials_PJS' is replaced by 'login_by_credentials('PJS')'",
                fixed = TRUE)
 
+  expect_error(read_eos_data(),
+               regexp = "Use 'NVIpjsr::read_eos_data' instead.",
+               fixed = TRUE)
+
+  expect_error(standardize_eos_data(),
+               regexp = "Use 'NVIpjsr::standardize_eos_data' instead.",
+               fixed = TRUE)
+
   options(width = unlist(linewidth))
 })
