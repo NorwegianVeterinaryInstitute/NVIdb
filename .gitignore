@@ -38,3 +38,8 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
+NVIdb.Rcheck/
+NVIdb*.tar.gz
+NVIdb*.tgz
+!vignettes/NVIdb.pdf
+
