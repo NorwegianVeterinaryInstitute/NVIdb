@@ -1,4 +1,4 @@
-# NVIdb 0.14.0.9000 - (2025-##-##)
+# NVIdb 0.14.1 - (2025-10-29)
 
 ## New features:
 
@@ -7,7 +7,7 @@
 
 ## Bug fixes:
 
--
+- corrected set_dir_NVI for use on workbench.
 
 
 ## Other changes:
