@@ -7,7 +7,7 @@
 
 ## Bug fixes:
 
--
+- corrected set_dir_NVI for use on workbench.
 
 
 ## Other changes:
