@@ -69,9 +69,7 @@ set_dir_NVI <- function(datasource,
     pathname <- file.path(Sys.getenv("HOME"), "windows", pathname)
   }
   # Remove slash
-  # if (isFALSE(slash)) {
-  #   pathname <- cut_slash(pathname)
-  # }
+  pathname <- cut_slash(pathname)
   if (isTRUE(slash)) {
     pathname <- paste0(pathname, "/")
   }

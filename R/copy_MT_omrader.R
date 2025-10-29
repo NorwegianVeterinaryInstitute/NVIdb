@@ -1,7 +1,7 @@
 #' @export
 #' @rdname add_MT_omrader
 
-copy_MT_omrader <- function(filename = list("komnr_2_MT_avdeling.csv", "MT_omrader.csv"),
+copy_MT_omrader <- function(filename = list("komnr_2_MT_avdeling.csv", "MT_omrader.csv", "komnr_2_MT_enhet.csv"),
                             from_path = base::paste0(set_dir_NVI("GrunndataLand"), "FormaterteData/"),
                             to_path = NULL) {
 

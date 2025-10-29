@@ -74,126 +74,131 @@
 #'     login_by_credentials or login_by_input
 #' @return An open ODBC-channel to the database service.
 #' @author Petter Hopp Petter.Hopp@@vetinst.no
-#' @name login_PJS-deprecated
+#' @name login_EOS-defunct
 #' @keywords internal
-#' @examples
-#' \dontrun{
-#' require(RODBC)
-#' journal_rapp <- login_PJS()
-#' # Reads hensiktregistret from PJS
-#' hensikter <- sqlQuery(journal_rapp,
-#'                        "select * from v_hensikt",
-#'                        as.is = TRUE,
-#'                        stringsAsFactors = FALSE)
-#' #
-#' odbcClose(journal_rapp)
-#' }
+#'
+NULL
+
+#' @name login_by_input_EOS-defunct
+#' @rdname login_EOS-defunct
+#' @keywords internal
+#'
+NULL
+
+#' @name login_by_credentials_EOS-defunct
+#' @rdname login_EOS-defunct
+#' @keywords internal
 #'
 NULL
 
 
-
-#' @title The login_PJS-functions are deprecated
-#' @description \code{login_PJS}, \code{login_by_input_PJS}, and
-#'     \code{login_by_credentials_PJS}, were deprecated from v0.##.# released 2024-##-##.
-#'     The wrapper functions \code{login_PJS} and \code{login_by_input_PJS} were
-#'     rarely used and therefore considered unnecessary. Although
-#'     \code{login_by_credentials_PJS} have been used extensively, it can easily
-#'     be replaced by \code{login_by_credentials("PJS")}. Therefore, it has been
-#'     considered unnecessary and have been deprecated.
-#' @details The old help pages can be found at \code{help("login_PJS-deprecated")}.
-#'     Information on deprecated function can be found at \code{help("NVIdb-deprecated")}.
-#' @param dbinterface The R-package that is used for interface towards the data
-#'     base.
-#' @param \dots Other arguments to be passed from the wrappers to
-#'     login_by_credentials or login_by_input.
 #' @export
+#' @rdname NVIdb-defunct
 #' @keywords internal
 #'
-login_PJS <- function(dbinterface = NULL, ...) {
+login_EOS <- function(...) {
 
-  .Deprecated(new = "login('PJS')",
-              package = "NVIdb",
-              msg = paste("'login_PJS' is replaced by 'login('PJS')' as the wrapper 'login_PJS'",
-                          "was rarely used and therefore considered unnecessary."))
+  .Defunct(new = "login('EOS')",
+           package = "NVIdb",
+           msg = paste("'login_EOS' is replaced by 'login('EOS')' as the wrapper 'login_EOS'",
+                       "was rarely used and therefore considered unnecessary."))
 
-  # ARGUMENT CHECKING ----
-  # Object to store check-results
-  checks <- checkmate::makeAssertCollection()
-
-  # dbinterface
-  checkmate::assert_choice(dbinterface, choices = c("odbc", "RPostgreSQL", "RODBC"), null.ok = TRUE, add = checks)
-
-  # Report check-results
-  checkmate::reportAssertions(checks)
-
-  # Use check for saved credentials to chose between login_by_input and login_by_credentials
-  if (isTRUE(NVIcheckmate::check_credentials("PJS"))) {
-    # If credentials are saved for the user profile
-    connection <- login_by_credentials(dbservice = "PJS", dbinterface = dbinterface, ...)
-  } else {
-    # If credentials are missing from the user profile
-    connection <- login_by_input(dbservice = "PJS", dbinterface = dbinterface, ...)
-  }
-
-  return(connection)
+  # .Deprecated(new = "login('EOS')",
+  #             package = "NVIdb",
+  #             msg = paste("'login_EOS' is replaced by 'login('EOS')' as the wrapper 'login_EOS'",
+  #                         "was rarely used and therefore considered unnecessary."))
+  #
+  # # ARGUMENT CHECKING ----
+  # # Object to store check-results
+  # checks <- checkmate::makeAssertCollection()
+  #
+  # # dbinterface
+  # checkmate::assert_choice(dbinterface, choices = c("odbc", "RPostgreSQL", "RODBC"), null.ok = TRUE, add = checks)
+  #
+  # # Report check-results
+  # checkmate::reportAssertions(checks)
+  #
+  # # Set service to EOS
+  # dbservice <- "EOS"
+  #
+  # # Use check for saved credentials to chose between login_by_input and login_by_credentials
+  # if (isTRUE(NVIcheckmate::check_credentials(dbservice))) {
+  #   # If credentials are saved for the user profile
+  #   login_by_credentials(dbservice, dbinterface = dbinterface, ...)
+  # } else {
+  #   # If credentials are missing from the user profile
+  #   login_by_input(dbservice, dbinterface = dbinterface, ...)
+  # }
 }
 
 
 #' @export
-#' @rdname login_PJS
+#' @rdname NVIdb-defunct
 
-login_by_input_PJS <- function(dbinterface = NULL, ...) {
+login_by_input_EOS <- function(...) {
 
-  .Deprecated(new = "login_by_input('PJS')",
-              package = "NVIdb",
-              msg = paste("'login_by_input_PJS' is replaced by 'login_by_input('PJS')' as",
-                          "the wrapper 'login_by_input_PJS'",
-                          "was rarely used and therefore considered unnecessary."))
+  .Defunct(new = "login_by_input('EOS')",
+           package = "NVIdb",
+           msg = paste("'login_by_input_EOS' is replaced by 'login_by_input('EOS')' as",
+                       "the wrapper 'login_by_input_EOS'",
+                       "was rarely used and therefore considered unnecessary."))
 
-  # ARGUMENT CHECKING ----
-  # Object to store check-results
-  checks <- checkmate::makeAssertCollection()
-
-  # dbinterface
-  checkmate::assert_choice(dbinterface, choices = c("odbc", "RPostgreSQL", "RODBC"), null.ok = TRUE, add = checks)
-
-  # Report check-results
-  checkmate::reportAssertions(checks)
-
-  # Oppretterknytning mot PJS
-  connection <- login_by_input(dbservice = "PJS", dbinterface = dbinterface, ...)
-
-  return(connection)
+  # .Deprecated(new = "login_by_input('EOS')",
+  #             package = "NVIdb",
+  #             msg = paste("'login_by_input_EOS' is replaced by 'login_by_input('EOS')' as",
+  #                         "the wrapper 'login_by_input_EOS'",
+  #                         "was rarely used and therefore considered unnecessary."))
+  #
+  # # ARGUMENT CHECKING ----
+  # # Object to store check-results
+  # checks <- checkmate::makeAssertCollection()
+  #
+  # # dbinterface
+  # checkmate::assert_choice(dbinterface, choices = c("odbc", "RPostgreSQL", "RODBC"), null.ok = TRUE, add = checks)
+  #
+  # # Report check-results
+  # checkmate::reportAssertions(checks)
+  #
+  # # Oppretterknytning mot EOS
+  # odbcConnection <- login_by_input(dbservice = "EOS", dbinterface = dbinterface, ...)
+  #
+  # return(odbcConnection)
 }
 
 
+
 #' @export
-#' @rdname login_PJS
+#' @rdname NVIdb-defunct
 
-login_by_credentials_PJS <- function(dbinterface = NULL, ...) {
+login_by_credentials_EOS <- function(...) {
 
-  .Deprecated(new = "login_by_credentials('PJS')",
-              package = "NVIdb",
-              msg = paste("'login_by_credentials_PJS' is replaced by 'login_by_credentials('PJS')'",
-                          "as the wrapper 'login_by_credentials_PJS'",
-                          "was rarely used and therefore considered unnecessary."))
+  .Defunct(new = "login_by_credentials('EOS')",
+           package = "NVIdb",
+           msg = paste("'login_by_credentials_EOS' is replaced by 'login_by_credentials('EOS')'",
+                       "as the wrapper 'login_by_credentials_EOS'",
+                       "was rarely used and therefore considered unnecessary."))
 
-  # ARGUMENT CHECKING ----
-  # Object to store check-results
-  checks <- checkmate::makeAssertCollection()
-
-  # Identify if NVIconfig are installed.
-  NVIcheckmate::assert_package(x = "NVIconfig", add = checks)
-  # credentials
-  NVIcheckmate::assert_credentials(x = "PJS", add = checks)
-  # dbinterface
-  checkmate::assert_choice(dbinterface, choices = c("odbc", "RPostgreSQL", "RODBC"), null.ok = TRUE, add = checks)
-
-  # Report check-results
-  checkmate::reportAssertions(checks)
-
-  connection <- NVIdb::login_by_credentials(dbservice = "PJS", dbinterface = dbinterface, ...)
-
-  return(connection)
+  # .Deprecated(new = "login_by_credentials('EOS')",
+  #             package = "NVIdb",
+  #             msg = paste("'login_by_credentials_EOS' is replaced by 'login_by_credentials('EOS')'",
+  #                         "as the wrapper 'login_by_credentials_EOS'",
+  #                         "was rarely used and therefore considered unnecessary."))
+  #
+  # # ARGUMENT CHECKING ----
+  # # Object to store check-results
+  # checks <- checkmate::makeAssertCollection()
+  #
+  # # Identify if NVIconfig are installed.
+  # NVIcheckmate::assert_package(x = "NVIconfig", add = checks)
+  # # credentials
+  # NVIcheckmate::assert_credentials(x = "EOS", add = checks)
+  # # dbinterface
+  # checkmate::assert_choice(dbinterface, choices = c("odbc", "RPostgreSQL", "RODBC"), null.ok = TRUE, add = checks)
+  #
+  # # Report check-results
+  # checkmate::reportAssertions(checks)
+  #
+  # connection <- NVIdb::login_by_credentials(dbservice = "EOS", dbinterface = dbinterface, ...)
+  #
+  # return(connection)
 }
