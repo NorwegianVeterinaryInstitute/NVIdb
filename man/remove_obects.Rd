@@ -7,13 +7,13 @@
 remove_obects(object, envir = parent.env(environment()))
 }
 \arguments{
+\item{object}{[\code{character}]\cr
+Objects that should be removed.}
+
 \item{envir}{[\code{environment}]\cr
 The environment from which the objects should be removed. Defaults to the
     function's parent environment, i.e. the environment from which the
     function was called.}
-
-\item{objects}{[\code{character}]\cr
-Objects that should be removed.}
 }
 \value{
 none, objects are removed from the environment.
@@ -24,13 +24,15 @@ Convenience wrapper around \code{rm}. The function accepts a vector
     them.
 }
 \examples{
-# Reading from standard directory at NVI's network
+\dontrun{
+library(NVIdb)
 xx <- 12345
 remove_objects("xx")
 
 xy <- 123
 xz <- 456
 remove_objects(c("xy", "xz", "zz"))
+}
 
 }
 \author{
