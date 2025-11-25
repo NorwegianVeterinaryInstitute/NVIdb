@@ -1,8 +1,10 @@
-# NVIdb 0.14.1.9000 - (2025-##-##)
+# NVIdb 0.14.1.9001 - (2025-##-##)
 
 ## New features:
 
--
+- Created `remove_objects`, a convenience wrapper around `rm`. The function 
+accepts a vector with named objects and checks if the objects exist before 
+trying removing them.
 
 
 ## Bug fixes:

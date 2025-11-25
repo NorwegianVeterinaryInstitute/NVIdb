@@ -1,6 +1,6 @@
 Package: NVIdb
 Title: Tools to facilitate the use of NVI's databases
-Version: 0.14.1.9000
+Version: 0.14.1.9001
 Date: 2025-##-##
 Authors@R: 
   c(person(given = "Petter",
