@@ -2,7 +2,9 @@
 
 ## New features:
 
--
+- Created `remove_objects`, a convenience wrapper around `rm`. The function 
+accepts a vector with named objects and checks if the objects exist before 
+trying removing them.
 
 
 ## Bug fixes:
