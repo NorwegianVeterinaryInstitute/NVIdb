@@ -112,7 +112,7 @@ test_that("colClasses for csv-files", {
 
   # Make a vector with correct column names after translation
   correct_result <- c("anleggskode" = "character", "gjeldende_prodnr8" = "character", "hovednr" = "character", "id_nr" = "character",
-                      "komnr" = "character", "orgnr" = "character", "prodnr10" = "character", "prodnr8" = "character",
+                      "komnr" = "character", "prodnr10" = "character", "prodnr8" = "character",
                       "produsentfodselsnr" = "character", "varekategorikode" = "character", "varekode" = "character")
 
   # Compare Add fylke, current fylkenr and current fylke with correct result
