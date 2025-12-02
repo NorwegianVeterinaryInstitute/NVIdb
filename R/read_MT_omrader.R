@@ -71,8 +71,10 @@ read_MT_omrader <- function(filename = list("komnr_2_MT_avdeling.csv", "MT_omrad
   colnames(komnr_2_MT_enhet)[which(colnames(komnr_2_MT_enhet) == "Avdeling")] <- "MT_avdeling"
   colnames(komnr_2_MT_enhet)[which(colnames(komnr_2_MT_enhet) == "Divisjon_kode")] <- "MT_divisjonnr"
   colnames(komnr_2_MT_enhet)[which(colnames(komnr_2_MT_enhet) == "Divisjon")] <- "MT_divisjon"
-  colnames(komnr_2_MT_enhet)[which(colnames(komnr_2_MT_enhet) == "Enhet_kode")] <- "MT_enhetnr"
-  colnames(komnr_2_MT_enhet)[which(colnames(komnr_2_MT_enhet) == "Enhet")] <- "MT_enhet"
+  # colnames(komnr_2_MT_enhet)[which(colnames(komnr_2_MT_enhet) == "Enhet_kode")] <- "MT_enhetnr"
+  # colnames(komnr_2_MT_enhet)[which(colnames(komnr_2_MT_enhet) == "Enhet")] <- "MT_enhet"
+  colnames(komnr_2_MT_enhet)[which(colnames(komnr_2_MT_enhet) == "Enhet_kode")] <- "MT_seksjonnr"
+  colnames(komnr_2_MT_enhet)[which(colnames(komnr_2_MT_enhet) == "Enhet")] <- "MT_seksjon"
   colnames(komnr_2_MT_enhet)[which(colnames(komnr_2_MT_enhet) == "Produkt_fag")] <- "produkt_fag"
   # Removes double spaces from original source file
   komnr_2_MT_enhet$produkt_fag <- gsub("  ", " ", komnr_2_MT_enhet$produkt_fag, fixed = TRUE)
@@ -90,7 +92,7 @@ read_MT_omrader <- function(filename = list("komnr_2_MT_avdeling.csv", "MT_omrad
                                                "MT_divisjonnr", "MT_divisjon",
                                                "MT_regionnr", "MT_region",
                                                "MT_avdelingnr", "MT_avdeling",
-                                               "MT_enhetnr", "MT_enhet",
+                                               "MT_seksjonnr", "MT_seksjon",
                                                "produkt_fag")]
   # RETURN DATA ----
   return(komnr_2_MT_omrader)
