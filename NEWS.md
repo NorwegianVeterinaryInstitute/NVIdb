@@ -1,3 +1,22 @@
+# NVIdb 0.15.0 - (2025-12-03)
+
+## New features:
+
+- Created `remove_objects`, a convenience wrapper around `rm` | `remove`. The 
+function accepts a vector with named objects and checks if the objects exist 
+before trying to remove them.
+
+- Changed to `MT_sekjonnr` and `MT_seksjon` for `read_MT_omrader` and 
+`add_MT_omrader` in accordance with the terms used by NFSA.
+
+
+## BREAKING CHANGES:
+
+- Changed the name of the last level in the output from `read_MT_omrader` to 
+`MT_sekjonnr` and `MT_seksjon` from `MT_enhetnr` and `MT_enhet`. This also 
+affects the use of `add_MT_omrader`.
+
+
 # NVIdb 0.14.1 - (2025-10-29)
 
 ## New features:
@@ -7,12 +26,7 @@
 
 ## Bug fixes:
 
-- corrected set_dir_NVI for use on workbench.
-
-
-## Other changes:
-
--
+- corrected `set_dir_NVI` for use on workbench.
 
 
 ## BREAKING CHANGES:
@@ -31,11 +45,11 @@
 
 ## New features:
 
-- Created read_avlsgris to read the register of nucleus and multiplier pig herds.
+- Created `read_avlsgris` to read the register of nucleus and multiplier pig herds.
 
-- Created read_purkering, to read the register of sow pools herds, i.e. the central herd and the satellite herds.
+- Created `read_purkering`, to read the register of sow pools herds, i.e. the central herd and the satellite herds.
 
-- Created find_file_near_date that finds the file nearest to a wanted date based on the date included in the file name. 
+- Created `find_file_near_date` that finds the file nearest to a wanted date based on the date included in the file name. 
 
 
 ## BREAKING CHANGES:

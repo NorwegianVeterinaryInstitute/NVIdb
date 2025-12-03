@@ -13,7 +13,7 @@ add_MT_omrader(
   fag = NULL,
   translation_table = komnr_2_MT_omrader,
   code_column = c("komnr"),
-  new_column = c("MT_avdelingnr", "MT_avdeling", "MT_enhetnr", "MT_enhet"),
+  new_column = c("MT_avdelingnr", "MT_avdeling", "MT_seksjonnr", "MT_seksjon"),
   position = "right",
   overwrite = FALSE
 )
@@ -55,7 +55,7 @@ The column with the code value. Valid values are one
 \item{new_column}{[\code{character}]\cr
 The name(s) of the new column(s) that should be added to the data,
     see examples. Defaults to c("MT_avdelingnr", "MT_avdeling",
-    "MT_enhetnr", "MT_enhetnr").}
+    "MT_seksjonnr", "MT_seksjon").}
 
 \item{position}{[\code{character(1)}]\cr
 The position for the new columns, can be one of c("first", 
@@ -106,8 +106,8 @@ Function to add columns with the various MT-omrader. In addition,
 \code{add_MT_omrader} can be used to translate the komnr into
     MT-omrader. The organisation of MT in areas was revised in 2025. If the
     input year >= 2025, the komnr will be translated to the structure from 2025:
-    MT_divisjonnr, MT_divisjon, MT_avdelingnr,MT_avdeling, MT_enhetrn,
-    MT_enhet. If the input year is between 2004 and 2024, the komnr will be
+    MT_divisjonnr, MT_divisjon, MT_avdelingnr,MT_avdeling, MT_seksjonnr,
+    MT_seksjon. If the input year is between 2004 and 2024, the komnr will be
     translated to the structure from 2004 to 2024: MT_avdelingnr, MT_avdeling,
     MT_regionnr and MT_region.
 

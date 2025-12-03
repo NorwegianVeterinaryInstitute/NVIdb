@@ -33,8 +33,8 @@ test_that("Correct merging of MT-avdeling og MT-region basert på organisering f
     list("MT_avdelingnr" = c("M42200", "M42200", "M42200", "M42200", "M42200", "M42200"),
          "MT_avdeling" = c("Avdeling landdyr", "Avdeling landdyr", "Avdeling landdyr",
                            "Avdeling landdyr", "Avdeling landdyr", "Avdeling landdyr"),
-         "MT_enhetnr" = c("M42250", "M42250", "M42250", "M42250", "M42260", "M42220"),
-         "MT_enhet" = c("Seksjon produksjonsdyr øst", "Seksjon produksjonsdyr øst",
+         "MT_seksjonnr" = c("M42250", "M42250", "M42250", "M42250", "M42260", "M42220"),
+         "MT_seksjon" = c("Seksjon produksjonsdyr øst", "Seksjon produksjonsdyr øst",
                         "Seksjon produksjonsdyr øst", "Seksjon produksjonsdyr øst",
                         "Seksjon produksjonsdyr sør", "Seksjon produksjonsdyr midt"),
          "komnr" = c("0123", "3014", "3118", "0301", "1142", "5001")))
@@ -45,7 +45,7 @@ test_that("Correct merging of MT-avdeling og MT-region basert på organisering f
                                   fag = "Storfe",
                                   translation_table = komnr_2_MT_omrader,
                                   code_column = "komnr",
-                                  new_column = c("MT_avdelingnr", "MT_avdeling", "MT_enhetnr", "MT_enhet"),
+                                  new_column = c("MT_avdelingnr", "MT_avdeling", "MT_seksjonnr", "MT_seksjon"),
                                   position = "first")
   rownames(result) <- c(1:nrow(result))
   expect_identical(result, correct_result)
@@ -59,8 +59,8 @@ test_that("Correct merging of MT-avdeling og MT-region basert på organisering f
     list("MT_avdelingnr" = c("M42300", "M42300", "M42300", "M42300", "M42300"),
          "MT_avdeling" = c("Avdeling slakteri", "Avdeling slakteri", "Avdeling slakteri",
                            "Avdeling slakteri", "Avdeling slakteri"),
-         "MT_enhetnr" = c("M42330", "M42330", "M42330", "M42330", "M42350"),
-         "MT_enhet" = c("Seksjon rødt kjøtt vest", "Seksjon rødt kjøtt vest",
+         "MT_seksjonnr" = c("M42330", "M42330", "M42330", "M42330", "M42350"),
+         "MT_seksjon" = c("Seksjon rødt kjøtt vest", "Seksjon rødt kjøtt vest",
                         "Seksjon rødt kjøtt vest", "Seksjon rødt kjøtt vest",
                         "Seksjon rødt kjøtt sør"),
          "komnr" = c("1154", "1159", "1160", "1214", "1142")))
@@ -71,7 +71,7 @@ test_that("Correct merging of MT-avdeling og MT-region basert på organisering f
                            fag = "Storfeslakt",
                            translation_table = komnr_2_MT_omrader,
                            code_column = "komnr",
-                           new_column = c("MT_avdelingnr", "MT_avdeling", "MT_enhetnr", "MT_enhet"),
+                           new_column = c("MT_avdelingnr", "MT_avdeling", "MT_seksjonnr", "MT_seksjon"),
                            position = "first")
   rownames(result) <- c(1:nrow(result))
   expect_identical(result, correct_result)
