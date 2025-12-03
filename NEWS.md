@@ -1,4 +1,4 @@
-# NVIdb 0.14.1.9001 - (2025-##-##)
+# NVIdb 0.15.0 - (2025-12-03)
 
 ## New features:
 
@@ -8,16 +8,6 @@ before trying to remove them.
 
 - Changed to `MT_sekjonnr` and `MT_seksjon` for `read_MT_omrader` and 
 `add_MT_omrader` in accordance with the terms used by NFSA.
-
-
-## Bug fixes:
-
--
-
-
-## Other changes:
-
--
 
 
 ## BREAKING CHANGES:
