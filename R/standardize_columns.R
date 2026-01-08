@@ -172,7 +172,6 @@
 #'
 standardize_columns <- function(data,
                                 dbsource = deparse(substitute(data)),
-                                #   csvfile = NULL,
                                 standards = file.path(NVIdb::set_dir_NVI("ProgrammeringR", slash = FALSE),
                                                       "standardization", "colnames", "column_standards.csv"),
                                 property,
@@ -192,9 +191,9 @@ standardize_columns <- function(data,
   checks <- checkmate::makeAssertCollection()
   # Perform checks
   if (tolower(property) == "colclasses") {
-    checkmate::assert_file_exists(data, access = "r")
+    checkmate::assert_file_exists(data, access = "r", add = checks)
   } else {
-    checkmate::assert_data_frame(data)
+    checkmate::assert_data_frame(data, add = checks)
   }
 
   # if dbsource is a vector with length more than one, e.g a filename made by paste
@@ -224,7 +223,7 @@ standardize_columns <- function(data,
   if (inherits(standards, what = "data.frame")) {
     checkmate::assert_data_frame(standards, min.rows = 1, min.cols = 6, add = checks)
   }
-# property
+  # property
   checkmate::assert_subset(tolower(property),
                            choices = c("colnames", "colclasses",
                                        "collabels", "colwidths_excel",
@@ -241,16 +240,6 @@ standardize_columns <- function(data,
   property <- tolower(property)
   dbsource <- tolower(dbsource)
 
-  # Reading column standards from a csv-file based on in an Excel file
-  # if (is.null(standards)) {
-  #   column_standards <- utils::read.csv2(
-  #     file = file.path(NVIdb::set_dir_NVI("ProgrammeringR", slash = FALSE),
-  #                      "standardization", "column_standards.csv"),
-  #     fileEncoding = "UTF-8"
-  #   )
-  # } else {
-  #   column_standards <- standards
-  # }
   if (inherits(standards, what = "character")) {
     column_standards <- utils::read.csv2(file = standards, fileEncoding = "UTF-8")
   }
@@ -277,79 +266,96 @@ standardize_columns <- function(data,
 
   # CHANGE DATABASE VARIABLE NAMES INTO STANDARD COLUMN NAMES FOR USE IN DATA FRAMES ----
   if (property == "colnames") {
-    # Generate data frame with the column names in one column named V1
-    columnnames <- as.data.frame(matrix(colnames(data), ncol = 1))
-    # Generate column with original order of column names
-    #  Necessary to avoid change in order when using merge
-    columnnames$original_sort_order <- seq_len(nrow(columnnames))
 
-    # standard <- column_standards |>
-    #   # Filter to include only information for relevant column names and with property information
-    #   dplyr::filter(.data$colname_db %in% columnnames$V1) |>
-    #   dplyr::filter(!is.na(.data$colname)) |>
-    #   dplyr::select(.data$table_db, .data$colname_db, .data$colname) |>
-    #   dplyr::distinct()
-    standard <- column_standards
-    # Filter to include only information for relevant column names and with property information
-    standard <- subset(standard, standard$colname_db %in% columnnames$V1)
-    standard <- subset(standard, !is.na(standard$colname))
-    standard <- standard[, c("table_db", "colname_db", "colname")]
-    # standard <- unique(standard)
+    column_values <- find_standard_values_for_property(column_names = colnames(data),
+                                                       dbsource = dbsource,
+                                                       org_values_in_column = "colname_db",
+                                                       new_values_in_column = "colname",
+                                                       standard = column_standards)
 
-    # Keep information on relevant table name and combine information for all other tables
-    standard[which(standard$table_db != dbsource), "table_db"] <- NA
-    standard <- unique(standard)
 
-    if (dim(standard)[1] > 0) {
-      # standard <- standard |>
-      #   # Identify column names with only one suggested column width
-      #   dplyr::add_count(.data$colname_db, name = "n") |>
-      #   dplyr::ungroup() # |>
-      # Identify column names with only one suggested column width
-      aggregated_value <- stats::aggregate(stats::as.formula(paste("cbind(n = colname)",
-                                                                   "~",
-                                                                   paste(c("colname_db"), collapse = " + "))),
-                                           data = standard,
-                                           FUN = function(x) {length(x)})
-      standard <- merge(x = standard, y = aggregated_value, by = "colname_db", all.x = TRUE)
-      # # Select column width either if only one suggested or for the current table
-      # dplyr::filter(.data$n == 1 | .data$table_db == dbsource & .data$n > 1) |>
-      # dplyr::select(.data$colname_db, .data$colname) |>
-      # dplyr::distinct()
-      # Select column width either if only one suggested or for the current table
-      standard <- subset(standard, standard$n == 1 | (standard$table_db == dbsource & standard$n > 1))
-      standard <- standard[, c("colname_db", "colname")]
-      standard <- unique(standard)
-    }
-
-    # # Standardize column names
-    # if (dbsource %in% column_standards[which(column_standards$unique_colnames == 0), "table_db"]) {
-    #   stand_columnnames <- unique(column_standards[which(column_standards$unique_colnames == 0 & column_standards$table_db == dbsource),
-    #                                                c("colname_db", "colname")])
-    #   # New column with standard column names
-    #   columnnames <- merge(columnnames, stand_columnnames, by.x = "V1", by.y = "colname_db", all.x = TRUE)
-    #   columnnames[which(!is.na(columnnames$colname)), "V1"] <- columnnames[which(!is.na(columnnames$colname)), "colname"]
-    #   columnnames$colname <- NULL
+    # # Generate data frame with the column names in one column named V1
+    # columnnames <- as.data.frame(matrix(colnames(data), ncol = 1))
+    # # columnnames <- as.data.frame(list(new_column_value = colnames(data)))
+    # # Generate column with original order of column names
+    # #  Necessary to avoid change in order when using merge
+    # columnnames$original_sort_order <- seq_len(nrow(columnnames))
     #
+    # # standard <- column_standards |>
+    # #   # Filter to include only information for relevant column names and with property information
+    # #   dplyr::filter(.data$colname_db %in% columnnames$V1) |>
+    # #   dplyr::filter(!is.na(.data$colname)) |>
+    # #   dplyr::select(.data$table_db, .data$colname_db, .data$colname) |>
+    # #   dplyr::distinct()
+    # standard <- column_standards
+    # # Filter to include only information for relevant column names and with property information
+    # standard <- subset(standard, standard$colname_db %in% columnnames$V1)
+    # standard <- subset(standard, !is.na(standard$colname))
+    # standard <- standard[, c("table_db", "colname_db", "colname")]
+    # # standard <- unique(standard)
+    #
+    # # Keep information on relevant table name and combine information for all other tables
+    # standard[which(standard$table_db != dbsource), "table_db"] <- NA
+    # standard <- unique(standard)
+    #
+    # if (dim(standard)[1] > 0) {
+    #   # standard <- standard |>
+    #   #   # Identify column names with only one suggested column width
+    #   #   dplyr::add_count(.data$colname_db, name = "n") |>
+    #   #   dplyr::ungroup() # |>
+    #   # Identify column names with only one suggested column width
+    #   aggregated_value <- stats::aggregate(stats::as.formula(paste("cbind(n = colname)",
+    #                                                                "~",
+    #                                                                paste(c("colname_db"), collapse = " + "))),
+    #                                        data = standard,
+    #                                        FUN = function(x) {length(x)})
+    #   standard <- merge(x = standard, y = aggregated_value, by = "colname_db", all.x = TRUE)
+    #   # # Select column width either if only one suggested or for the current table
+    #   # dplyr::filter(.data$n == 1 | .data$table_db == dbsource & .data$n > 1) |>
+    #   # dplyr::select(.data$colname_db, .data$colname) |>
+    #   # dplyr::distinct()
+    #   # Select column width either if only one suggested or for the current table
+    #   standard <- subset(standard, standard$n == 1 | (standard$table_db == dbsource & standard$n > 1))
+    #   standard <- standard[, c("colname_db", "colname")]
+    #   standard <- unique(standard)
     # }
     #
-    # stand_columnnames <- unique(column_standards[which(column_standards$unique_colnames == 1), c("colname_db", "colname")])
+    # # # Standardize column names
+    # # if (dbsource %in% column_standards[which(column_standards$unique_colnames == 0), "table_db"]) {
+    # #   stand_columnnames <- unique(column_standards[which(column_standards$unique_colnames == 0 & column_standards$table_db == dbsource),
+    # #                                                c("colname_db", "colname")])
+    # #   # New column with standard column names
+    # #   columnnames <- merge(columnnames, stand_columnnames, by.x = "V1", by.y = "colname_db", all.x = TRUE)
+    # #   columnnames[which(!is.na(columnnames$colname)), "V1"] <- columnnames[which(!is.na(columnnames$colname)), "colname"]
+    # #   columnnames$colname <- NULL
+    # #
+    # # }
+    # #
+    # # stand_columnnames <- unique(column_standards[which(column_standards$unique_colnames == 1), c("colname_db", "colname")])
+    #
+    #
+    # # New column with standard column names
+    # columnnames <- merge(columnnames, standard, by.x = "V1", by.y = "colname_db", all.x = TRUE)
+    # # Impute with snake case of column name in case standard column name isn't defined
+    # columnnames[which(is.na(columnnames$colname)), "colname"] <-
+    #   snakecase::to_snake_case(columnnames[which(is.na(columnnames$colname)), "V1"], transliterations = c("danish", "Latin-ASCII"))
+    #
+    # # Sorts data in original order
+    # columnnames <- columnnames[order(columnnames$original_sort_order), ]
+    #
+    # vector with new column names
+    # columnnames <- columnnames[, "colname"]
 
-
-    # New column with standard column names
-    columnnames <- merge(columnnames, standard, by.x = "V1", by.y = "colname_db", all.x = TRUE)
     # Impute with snake case of column name in case standard column name isn't defined
-    columnnames[which(is.na(columnnames$colname)), "colname"] <-
-      snakecase::to_snake_case(columnnames[which(is.na(columnnames$colname)), "V1"], transliterations = c("danish", "Latin-ASCII"))
-
-    # Sorts data in original order
-    columnnames <- columnnames[order(columnnames$original_sort_order), ]
+    column_values[which(is.na(column_values$colname)), "colname"] <-
+      snakecase::to_snake_case(column_values[which(is.na(column_values$colname)), "V1"], transliterations = c("danish", "Latin-ASCII"))
 
     # vector with new column names
-    columnnames <- columnnames[, "colname"]
+    column_values <- column_values[, "colname"]
+
 
     # Change source db column names to standard column names
-    colnames(data) <- columnnames
+    colnames(data) <- column_values
 
     # Return data frame with standardized column names
     return(data)
@@ -500,67 +506,74 @@ standardize_columns <- function(data,
 
   # STANDARDIZE COLUMN WIDTHS FOR EXCEL ----
   if (property == "colwidths_excel") {
-    # Generate data frame with the column names in one column named V1
-    colwidths <- as.data.frame(matrix(colnames(data), ncol = 1))
-    # Generate column with original order of column names
-    #  Necessary to avoid change in order when using merge
-    colwidths$original_sort_order <- seq_len(nrow(colwidths))
 
-    # column_standards$dbsource <- dbsource
-    # print(head(column_standards))
+    column_values <- find_standard_values_for_property(column_names = colnames(data),
+                                                       dbsource = dbsource,
+                                                       org_values_in_column = "colname",
+                                                       new_values_in_column = "colwidth_Excel",
+                                                       standard = column_standards)
 
-    # Standardize colwidths
-    # standard <- column_standards |>
-    #   # Filter to include only information for relevant column names and with property information
-    #   dplyr::filter(.data$colname %in% colwidths$V1) |>
-    #   dplyr::filter(!is.na(.data$colwidth_Excel)) |>
-    #   dplyr::select(.data$table_db, .data$colname, colwidth = .data$colwidth_Excel)
-    # dplyr::distinct()
-    standard <- column_standards
-    # Filter to include only information for relevant column names and with property information
-    standard <- subset(standard, standard$colname %in% colwidths$V1)
-    standard <- subset(standard, !is.na(standard$colwidth_Excel))
-    standard <- standard[, c("table_db", "colname", "colwidth_Excel")]
-    colnames(standard) <- c("table_db", "colname", "colwidth")
-    # Keep information on relevant table name and combine information for all other tables
-    standard[which(standard$table_db != dbsource), "table_db"] <- NA
-    standard <- unique(standard)
-
-    # if there are information on column widths
-    if (dim(standard)[1] > 0) {
-      # standard <- standard |>
-      #   # Identify column names with only one suggested column width
-      #   dplyr::add_count(.data$colname, name = "n") |>
-      #   dplyr::ungroup() # |>
-      aggregated_value <- stats::aggregate(stats::as.formula(paste("cbind(n = colwidth)",
-                                                                   "~",
-                                                                   paste(c("colname"), collapse = " + "))),
-                                           data = standard,
-                                           FUN = function(x) {length(x)})
-      standard <- merge(x = standard, y = aggregated_value, by = "colname", all.x = TRUE)
-      # # Select column width either if only one suggested or for the current table
-      # dplyr::filter(.data$n == 1 | .data$table_db == dbsource & .data$n > 1) |>
-      # dplyr::select(.data$colname, .data$colwidth) |>
-      # dplyr::distinct()
-      # Select column width either if only one suggested or for the current table
-      standard <- subset(standard, standard$n == 1 | (standard$table_db == dbsource & standard$n > 1))
-      standard <- standard[, c("colname", "colwidth")]
-      standard <- unique(standard)
-    }
-
-    # New column with standard column names¨
-    colwidths <- merge(colwidths, standard, by.x = "V1", by.y = "colname", all.x = TRUE)
-    # Impute with snake case of column name in case standard column name isn't defined
-    colwidths[which(is.na(colwidths$colwidth)), "colwidth"] <- 10.71
-
-    # Sorts data in original order
-    colwidths <- colwidths[order(colwidths$original_sort_order), ]
-
+    # # Generate data frame with the column names in one column named V1
+    # colwidths <- as.data.frame(matrix(colnames(data), ncol = 1))
+    # # Generate column with original order of column names
+    # #  Necessary to avoid change in order when using merge
+    # colwidths$original_sort_order <- seq_len(nrow(colwidths))
+    #
+    # # column_standards$dbsource <- dbsource
+    # # print(head(column_standards))
+    #
+    # # Standardize colwidths
+    # # standard <- column_standards |>
+    # #   # Filter to include only information for relevant column names and with property information
+    # #   dplyr::filter(.data$colname %in% colwidths$V1) |>
+    # #   dplyr::filter(!is.na(.data$colwidth_Excel)) |>
+    # #   dplyr::select(.data$table_db, .data$colname, colwidth = .data$colwidth_Excel)
+    # # dplyr::distinct()
+    # standard <- column_standards
+    # # Filter to include only information for relevant column names and with property information
+    # standard <- subset(standard, standard$colname %in% colwidths$V1)
+    # standard <- subset(standard, !is.na(standard$colwidth_Excel))
+    # standard <- standard[, c("table_db", "colname", "colwidth_Excel")]
+    # colnames(standard) <- c("table_db", "colname", "colwidth")
+    # # Keep information on relevant table name and combine information for all other tables
+    # standard[which(standard$table_db != dbsource), "table_db"] <- NA
+    # standard <- unique(standard)
+    #
+    # # if there are information on column widths
+    # if (dim(standard)[1] > 0) {
+    #   # standard <- standard |>
+    #   #   # Identify column names with only one suggested column width
+    #   #   dplyr::add_count(.data$colname, name = "n") |>
+    #   #   dplyr::ungroup() # |>
+    #   aggregated_value <- stats::aggregate(stats::as.formula(paste("cbind(n = colwidth)",
+    #                                                                "~",
+    #                                                                paste(c("colname"), collapse = " + "))),
+    #                                        data = standard,
+    #                                        FUN = function(x) {length(x)})
+    #   standard <- merge(x = standard, y = aggregated_value, by = "colname", all.x = TRUE)
+    #   # # Select column width either if only one suggested or for the current table
+    #   # dplyr::filter(.data$n == 1 | .data$table_db == dbsource & .data$n > 1) |>
+    #   # dplyr::select(.data$colname, .data$colwidth) |>
+    #   # dplyr::distinct()
+    #   # Select column width either if only one suggested or for the current table
+    #   standard <- subset(standard, standard$n == 1 | (standard$table_db == dbsource & standard$n > 1))
+    #   standard <- standard[, c("colname", "colwidth")]
+    #   standard <- unique(standard)
+    # }
+    #
+    # # New column with standard column names¨
+    # colwidths <- merge(colwidths, standard, by.x = "V1", by.y = "colname", all.x = TRUE)
+    # # Impute with snake case of column name in case standard column name isn't defined
+    #
+    # # Sorts data in original order
+    # colwidths <- colwidths[order(colwidths$original_sort_order), ]
+    #
     # vector with new column names
-    colwidths <- colwidths[, "colwidth"]
+    column_values <- column_values[, "colwidth_Excel"]
+    column_values[which(is.na(column_values))] <- 10.71
 
     # Return data frame with standardized column names
-    return(colwidths)
+    return(column_values)
   }
 
   # STANDARDIZE COLUMN ORDER ----
@@ -631,4 +644,91 @@ standardize_columns <- function(data,
 
 
   # LAST PROPERTY ASSIGNED ----
+}
+
+
+
+### find_standard_values_for_property ----
+#' @title Find standard column values for given property
+#' @description Ensures that all elements in a vector are named.
+#' @details Sub-function called by standardize columns to standardise code.
+#'
+#' @param column_names [\code{character}]\cr
+#' The column names of the data source. Defaults to \code{colnames(data)}.
+#' @param dbsource [\code{character(1)}]\cr
+#' The database that is the source of data. Should be the name of
+#'     the data source as registered in column_standards table. Defaults
+#'     to \code{dbsource}.
+#' @param org_values_in_column [\code{character(1)}]\cr
+#' The column name in the standards table in which the column names for which
+#'     one will find the property values. Must be one
+#'     of c("colname_db", "colname"). Defaults to \code{NULL}.
+#' @param new_values_in_column [\code{character(1)}]\cr
+#' The column name in the standards table in which one will find the property
+#'     values. Must be one of c("colname", "colclass", "collabel", "colwidths_Excel",
+#'     "colorder"). Defaults to \code{NULL}.
+#' @param standard [\code{data.frame}]\cr
+#' Table with column_standards. Defaults to column_standards.
+#' @param require_table [\code{logical(1)}]\cr
+#' If \code{TRUE}, only registrations in column_standards where table_db equals 
+#'     \code{dbsource} are included. Defaults to \code{FALSE}.
+
+#' @return A named vector where previously unnamed elements have been named with
+#'     the element value as name.
+#'
+#' @author Petter Hopp Petter.Hopp@@vetinst.no
+#' @keywords internal
+
+find_standard_values_for_property <- function(column_names,
+                                              dbsource,
+                                              org_values_in_column = NULL,
+                                              new_values_in_column = NULL,
+                                              standard,
+                                              require_table = FALSE) {
+
+  # Generate data frame with the column names in one column named V1
+  column_names <- as.data.frame(matrix(column_names, ncol = 1))
+  # column_names <- as.data.frame(matrix(colnames(data), ncol = 1))
+  # Generate column with original order of column names
+  #  Necessary to avoid change in order when using merge
+  column_names$original_sort_order <- seq_len(nrow(column_names))
+
+  # Filter to include only information for relevant column names and with property information
+  standard <- standard[which(standard[, org_values_in_column] %in% column_names$V1), ] # column_names[, property]), ]
+  # standard <- subset(standard, standard$colname_db %in% columnnames$V1)
+  standard <- standard[!is.na(standard[, new_values_in_column]), ]
+  # standard <- subset(standard, !is.na(standard$colname))
+  standard <- standard[, c("table_db", org_values_in_column, new_values_in_column)]
+  # standard <- standard[, c("table_db", "colname_db", "colname")]
+  # standard <- unique(standard)
+  if (isTRUE(require_table)) {
+    standard <- standard[which(standard[, "table_db"] == dbsource), ]
+  }
+
+  # Keep information on relevant table name and combine information for all other tables
+  standard[which(standard$table_db != dbsource), "table_db"] <- NA
+  standard <- unique(standard)
+
+  if (dim(standard)[1] > 0) {
+    # Identify column names with only one suggested value
+    aggregated_value <- stats::aggregate(stats::as.formula(paste("cbind(n = ", new_values_in_column, ")",
+                                                                 "~",
+                                                                 paste(c(org_values_in_column), collapse = " + "))),
+                                         data = standard,
+                                         FUN = function(x) {length(x)})
+    standard <- merge(x = standard, y = aggregated_value, by = org_values_in_column, all.x = TRUE)
+    # # Select column width either if only one suggested or for the current table
+    # Select column width either if only one suggested or for the current table
+    standard <- subset(standard, standard$n == 1 | (standard$table_db == dbsource & standard$n > 1))
+    standard <- standard[, c(org_values_in_column, new_values_in_column)]
+    standard <- unique(standard)
+  }
+  # New column with standard column names
+  column_values <- merge(column_names, standard, by.x = "V1", by.y = org_values_in_column, all.x = TRUE)
+
+  # Sorts data in original order
+  column_values <- column_values[order(column_values$original_sort_order), ]
+
+
+  return(column_values)
 }

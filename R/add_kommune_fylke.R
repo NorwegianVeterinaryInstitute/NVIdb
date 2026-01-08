@@ -88,7 +88,8 @@
 #'     input as a named vector, see examples. Defaults to "komnr".
 #' @param new_column [\code{character}]\cr
 #' The name(s) of the new column(s) that should be added to the data. Defaults
-#'     to c("gjeldende_komnr", "gjeldende_kommune", "gjeldende_fylkenr", "gjeldende_fylke").
+#'     to c("gjeldende_komnr", "gjeldende_kommune", "gjeldende_fylkenr",
+#'     "gjeldende_fylke").
 #' @param year [\code{integer(1) | character(1)}]\cr
 #' The year for which the komnr should be translated to valid komnr.
 #'     Defaults to the current year i.e. format(Sys.Date(), "\%Y").

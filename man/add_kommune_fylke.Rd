@@ -45,7 +45,8 @@ The name of the column with the code value. Valid values are one of
 
 \item{new_column}{[\code{character}]\cr
 The name(s) of the new column(s) that should be added to the data. Defaults
-    to c("gjeldende_komnr", "gjeldende_kommune", "gjeldende_fylkenr", "gjeldende_fylke").}
+    to c("gjeldende_komnr", "gjeldende_kommune", "gjeldende_fylkenr",
+    "gjeldende_fylke").}
 
 \item{year}{[\code{integer(1) | character(1)}]\cr
 The year for which the komnr should be translated to valid komnr.

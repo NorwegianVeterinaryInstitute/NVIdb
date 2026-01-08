@@ -17,7 +17,7 @@ test_that("Copy MT-omrader", {
 
 })
 
-test_that("Correct merging of MT-avdeling og MT-region basert på organisering fra 2025", {
+test_that("Correct merging of MT-avdeling og MT-seksjon basert på organisering fra 2025", {
   # skip if no connection to 'FAG' have been established
   skip_if_not(dir.exists(set_dir_NVI("FAG")))
 
@@ -102,6 +102,99 @@ test_that("Correct merging of MT-avdeling og MT-region basert på organisering f
                            code_column = "komnr",
                            new_column = c("MT_divisjonnr", "MT_divisjon", "MT_avdelingnr", "MT_avdeling"),
                            position = "first")
+  rownames(result) <- c(1:nrow(result))
+  expect_identical(result, correct_result)
+})
+
+
+test_that("Correct merging of MT-avdeling og MT-seksjon med shortname = TRUE basert på organisering fra 2025", {
+  # skip if no connection to 'FAG' have been established
+  skip_if_not(dir.exists(set_dir_NVI("FAG")))
+
+  # Load translation table for MT_omrader
+  komnr_2_MT_omrader <- read_MT_omrader()
+  # kommune_fylke <- read_kommune_fylke()
+
+  # Make a dataframe with kommunenr that should be translated
+  kommuner <- as.data.frame(list("komnr" = c("0123", "3014", "3118", "0301", "1142", "5001")))
+
+  # Make a dataframe with the correct result
+  correct_result <- as.data.frame(
+    list("MT_avdelingnr" = c("M42200", "M42200", "M42200", "M42200", "M42200", "M42200"),
+         "MT_avdeling" = c("Landdyr", "Landdyr", "Landdyr",
+                           "Landdyr", "Landdyr", "Landdyr"),
+         "MT_seksjonnr" = c("M42250", "M42250", "M42250", "M42250", "M42260", "M42220"),
+         "MT_seksjon" = c("Produksjonsdyr øst", "Produksjonsdyr øst",
+                          "Produksjonsdyr øst", "Produksjonsdyr øst",
+                          "Produksjonsdyr sør", "Produksjonsdyr midt"),
+         "komnr" = c("0123", "3014", "3118", "0301", "1142", "5001")))
+
+  # Compare Add fylke, current fylkenr and current fylke with correct result
+  result <- add_MT_omrader(data = kommuner,
+                           year = 2025,
+                           fag = "Storfe",
+                           translation_table = komnr_2_MT_omrader,
+                           code_column = "komnr",
+                           new_column = c("MT_avdelingnr", "MT_avdeling", "MT_seksjonnr", "MT_seksjon"),
+                           position = "first",
+                           shortname = TRUE)
+  rownames(result) <- c(1:nrow(result))
+  expect_identical(result, correct_result)
+
+  # Check if Vindafjord for slaughtered animals correct
+  # Make a dataframe with kommunenr that should be translated
+  kommuner <- as.data.frame(list("komnr" = c("1154", "1159", "1160", "1214", "1142")))
+
+  # Make a dataframe with the correct result
+  correct_result <- as.data.frame(
+    list("MT_avdelingnr" = c("M42300", "M42300", "M42300", "M42300", "M42300"),
+         "MT_avdeling" = c("Slakteri", "Slakteri", "Slakteri",
+                           "Slakteri", "Slakteri"),
+         "MT_seksjonnr" = c("M42330", "M42330", "M42330", "M42330", "M42350"),
+         "MT_seksjon" = c("Rødt kjøtt vest", "Rødt kjøtt vest",
+                          "Rødt kjøtt vest", "Rødt kjøtt vest",
+                          "Rødt kjøtt sør"),
+         "komnr" = c("1154", "1159", "1160", "1214", "1142")))
+
+  # Compare Add fylke, current fylkenr and current fylke with correct result
+  result <- add_MT_omrader(data = kommuner,
+                           year = 2025,
+                           fag = "Storfeslakt",
+                           translation_table = komnr_2_MT_omrader,
+                           code_column = "komnr",
+                           new_column = c("MT_avdelingnr", "MT_avdeling", "MT_seksjonnr", "MT_seksjon"),
+                           position = "first",
+                           shortname = TRUE)
+  rownames(result) <- c(1:nrow(result))
+  expect_identical(result, correct_result)
+
+
+  # Check if avdeling is correct for landsdekkende
+  # Make a dataframe with kommunenr that should be translated
+  kommuner <- as.data.frame(list("komnr" = c("0123", "3014", "3118", "1142", "5001")))
+
+  # Make a dataframe with the correct result
+  correct_result <- as.data.frame(
+    list("MT_divisjonnr" = c("M44000", "M44000", "M44000", "M44000", "M44000"),
+         "MT_divisjon" = c("Planter, fôr og drikkevann",
+                           "Planter, fôr og drikkevann",
+                           "Planter, fôr og drikkevann",
+                           "Planter, fôr og drikkevann",
+                           "Planter, fôr og drikkevann"),
+         "MT_avdelingnr" = c("M44200", "M44200", "M44200", "M44200", "M44200"),
+         "MT_avdeling" = c("Planter", "Planter", "Planter",
+                           "Planter", "Planter"),
+         "komnr" = c("0123", "3014", "3118", "1142", "5001")))
+
+  # Compare Add fylke, current fylkenr and current fylke with correct result
+  result <- add_MT_omrader(data = kommuner,
+                           year = 2025,
+                           fag = "Planter",
+                           translation_table = komnr_2_MT_omrader,
+                           code_column = "komnr",
+                           new_column = c("MT_divisjonnr", "MT_divisjon", "MT_avdelingnr", "MT_avdeling"),
+                           position = "first",
+                           shortname = TRUE)
   rownames(result) <- c(1:nrow(result))
   expect_identical(result, correct_result)
 })

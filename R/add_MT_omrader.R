@@ -39,6 +39,11 @@
 #'     cases, the existing column will be overwritten with new data and have
 #'     the same position.
 #'
+#' If \code{shortname = TRUE} a short version of the MT unit name is generated.
+#'     I.e. "Divisjon", "Avdeling" and "Seksjon" is removed from the unit name.
+#'     \code{shortname = TRUE} has only meaning for the MT units from 2025 and
+#'     onwards.
+#'
 #' \code{read_MT_omrader} reads the files "komnr_2_MT_avdeling.csv",
 #'     "MT_omrader.csv", and "komnr_2_MT_enhet.csv" into a data frame, usually
 #'     named komnr_2_MT_omrader. This file is used by \code{add_MT_omrader}. If
@@ -76,6 +81,9 @@
 #'     "MT_seksjonnr", "MT_seksjon").
 #' @template position
 #' @template overwrite
+#' @param shortname [\code{logical(1)}]\cr
+#' If \code{TRUE}, a short version of the MT unit name is generated, see details.
+#'     Defaults to \code{FALSE}.
 #' @param filename [\code{list}]\cr
 #' File names of the source files for the translation table. Defaults to
 #'     list("komnr_2_MT_avdeling.csv", "MT_omrader.csv", "komnr_2_MT_enhet.csv").
@@ -144,7 +152,8 @@ add_MT_omrader <- function(data,
                            code_column = c("komnr"),
                            new_column = c("MT_avdelingnr", "MT_avdeling", "MT_seksjonnr", "MT_seksjon"),
                            position = "right",
-                           overwrite = FALSE) {
+                           overwrite = FALSE,
+                           shortname = FALSE) {
 
   # Ensure that code_column and new_column are named vectors by using the internal function set_name_vector()
   # Thereby, the following code can assume these to be named vectors
@@ -224,6 +233,8 @@ Drikkevann;Drikkevann"
                                any.missing = FALSE,
                                all.missing = FALSE,
                                add = checks)
+  # shortname
+  checkmate::assert_flag(shortname, add = checks)
   # fag
   if (!is.null(year) && !is.na(year) && year >= 2025) {
     checkmate::assert_choice(x = tolower(fag),
@@ -246,6 +257,24 @@ Drikkevann;Drikkevann"
 
   # unique() is necessary to avoid duplicate rows when code_column is not "komnr"
   code_2_new <- unique(translation_table[, c(unname(code_column), unname(new_column))])
+
+  if (year >= 2025 && isTRUE(shortname)) {
+    if ("MT_avdeling" %in% colnames(code_2_new)) {
+      code_2_new$MT_avdeling <- gsub("Avdeling ", "", code_2_new$MT_avdeling, ignore.case = TRUE)
+      code_2_new$MT_avdeling <- paste0(toupper(substr(code_2_new$MT_avdeling, 1, 1)),
+                                      substr(code_2_new$MT_avdeling, 2, nchar(code_2_new$MT_avdeling)))
+    }
+    if ("MT_seksjon" %in% colnames(code_2_new)) {
+      code_2_new$MT_seksjon <- gsub("Seksjon ", "", code_2_new$MT_seksjon, ignore.case = TRUE)
+      code_2_new$MT_seksjon <- paste0(toupper(substr(code_2_new$MT_seksjon, 1, 1)),
+                                      substr(code_2_new$MT_seksjon, 2, nchar(code_2_new$MT_seksjon)))
+    }
+    if ("MT_divisjon" %in% colnames(code_2_new)) {
+      code_2_new$MT_divisjon <- gsub("Tilsynsdivisjon ", "", code_2_new$MT_divisjon, ignore.case = TRUE)
+      code_2_new$MT_divisjon <- paste0(toupper(substr(code_2_new$MT_divisjon, 1, 1)),
+                                      substr(code_2_new$MT_divisjon, 2, nchar(code_2_new$MT_divisjon)))
+    }
+  }
 
   # ADD NEW COLUMN(S) ----
   # Set up of parameters for the internal function add_new_column(). names() is used to select the column names
