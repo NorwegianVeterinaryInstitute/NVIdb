@@ -88,10 +88,10 @@ test_that("colClasses for csv-files", {
   colclasses <- standardize_columns(data = paste0(set_dir_NVI("Prodtilskudd"), "FormaterteData/Pkode20191001 Uttrekk per 20200624 UTF8.csv"), property = "colclasses")
 
   # Make a vector with correct column names after translation
-  correct_result <- c("Epost" = "character", "gjeldende_fylke" = "character", "gjeldende_fylkenr" = "character",
-                      "gjeldende_kommune" = "character", "gjeldende_komnr" = "character", "gjeldende_prodnr8" = "character", "komnr" = "character",
-                      "Mobilnummer" = "character", "Orgnr" = "character", "prodnr10" = "character",
-                      "prodnr8" = "character", "Telledato" = "character")
+  correct_result <- c("Telledato" = "character", "gjeldende_fylkenr" = "character", "gjeldende_fylke" = "character",
+                      "gjeldende_komnr" = "character", "gjeldende_kommune" = "character", "gjeldende_prodnr8" = "character", "komnr" = "character",
+                      "prodnr8" = "character", "prodnr10" = "character", "Orgnr" = "character",
+                      "Mobilnummer" = "character", "Epost" = "character")
 
   # Compare Add fylke, current fylkenr and current fylke with correct result
   expect_equivalent(colclasses,
@@ -101,7 +101,7 @@ test_that("colClasses for csv-files", {
   colclasses <- standardize_columns(data = paste0(set_dir_NVI("Prodtilskudd"), "StotteData/Produksjonstilskuddskoder2_UTF8.csv"), property = "colclasses")
 
   # Make a vector with correct column names after translation
-  correct_result <- c("beskrivelse" = "character", "enhet" = "character", "soknadmnd" = "character", "telledato" = "character")
+  correct_result <- c("soknadmnd" = "character", "telledato" = "character", "beskrivelse" = "character", "enhet" = "character")
 
   # Compare Add fylke, current fylkenr and current fylke with correct result
   expect_equivalent(colclasses,
@@ -111,9 +111,11 @@ test_that("colClasses for csv-files", {
   colclasses <- standardize_columns(data = paste0(set_dir_NVI("LevReg"), "FormaterteData/LevReg_202001_202006.csv"), property = "colclasses")
 
   # Make a vector with correct column names after translation
-  correct_result <- c("anleggskode" = "character", "gjeldende_prodnr8" = "character", "hovednr" = "character", "id_nr" = "character",
-                      "komnr" = "character", "prodnr10" = "character", "prodnr8" = "character",
-                      "produsentfodselsnr" = "character", "varekategorikode" = "character", "varekode" = "character")
+  correct_result <- 
+    c("anleggskode" = "character","komnr" = "character", "produsentfodselsnr" = "character",
+      "varekode" = "character", "id_nr" = "character", "varekategorikode" = "character", 
+      "hovednr" = "character", "gjeldende_prodnr8" = "character", 
+      "prodnr8" = "character", "prodnr10" = "character")
 
   # Compare Add fylke, current fylkenr and current fylke with correct result
   expect_identical(colclasses,
@@ -220,8 +222,7 @@ test_that("Column order", {
   # Example with produksjonstilskudd in English
   df <- as.data.frame(cbind("soknadaar" = "2020", "gjeldende_prodnr8" = "30303030", "Orgnr" = 99999999,
                             "prodnr10" = "3030303030", "Fj\u00F8rfe" = 1, "prodnr8" = "30303030",
-                            "orgnr" = "988888888", "komnr" = "3030",
-                            "kommune" = "Nesbyen"))
+                            "komnr" = "3030", "kommune" = "Nesbyen"))
 
   df <- standardize_columns(data = df,
                             dbsource = "Produksjonstilskudd",

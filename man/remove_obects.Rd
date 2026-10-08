@@ -4,15 +4,15 @@
 \alias{remove_obects}
 \title{Remove objects if they exist in the environment}
 \usage{
-remove_obects(object, envir = parent.env(environment()))
+remove_obects(object, envir = environment())
 }
 \arguments{
 \item{object}{[\code{character}]\cr
 Objects that should be removed.}
 
 \item{envir}{[\code{environment}]\cr
-The environment from which the objects should be removed. Defaults to the
-    function's parent environment, i.e. the environment from which the
+The environment from which the objects should be removed. Defaults to
+    environment(), i.e. the environment from which the
     function was called.}
 }
 \value{

@@ -5,8 +5,8 @@
 #' @param object [\code{character}]\cr
 #' Objects that should be removed.
 #' @param envir [\code{environment}]\cr
-#' The environment from which the objects should be removed. Defaults to the
-#'     function's parent environment, i.e. the environment from which the
+#' The environment from which the objects should be removed. Defaults to
+#'     environment(), i.e. the environment from which the
 #'     function was called.
 #' @return none, objects are removed from the environment.
 #'
@@ -23,7 +23,7 @@
 #' remove_objects(c("xy", "xz", "zz"))
 #' }
 #'
-remove_obects <- function(object, envir = parent.env(environment())) {
+remove_obects <- function(object, envir = environment()) {
 
   # ARGUMENT CHECKING ----
   # Object to store check-results
@@ -40,5 +40,5 @@ remove_obects <- function(object, envir = parent.env(environment())) {
   # Identifies which objects that are in the environment
   objects_to_remove <- intersect(ls(name = envir), object)
   # Removes existing objects from the environment
-  rm(list = objects_to_remove, envir = envir)
+  rm(list = objects_to_remove, envir = envir, inherits = TRUE)
 }
