@@ -153,7 +153,7 @@
 #' @examples
 #' \dontrun{
 #' # Generate data frame to be standardized
-#' df <- cbind("\u00C5r" = 2020, "Hensiktkode" = "01001", komnr = "5001")
+#' df <- as.data.frame(cbind("\u00C5r" = 2020, "Hensiktkode" = "01001", komnr = "5001"))
 #' colnames(df)
 #'
 #' # Standardize column names
